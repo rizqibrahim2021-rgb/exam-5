@@ -1,0 +1,2600 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرخصة المهنية عام — اختبار تفاعلي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Almarai:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Almarai', sans-serif;
+        }
+
+        body {
+            background-color: #0b1329;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* شريط التحكم الشامل: التنقل + التصدير */
+        .main-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #111936;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid #1f2d5a;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-ctrl {
+            border: none;
+            padding: 9px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav { background: #1e3a8a; }
+        .btn-nav:hover { background: #2563eb; }
+        .btn-nav:disabled { background: #334155; cursor: not-allowed; opacity: 0.6; }
+
+        .btn-pdf { background: #0284c7; }
+        .btn-pdf:hover { background: #0369a1; }
+
+        .btn-img { background: #10b981; }
+        .btn-img:hover { background: #059669; }
+
+        .divider {
+            width: 1px;
+            height: 25px;
+            background: #334155;
+            margin: 0 5px;
+        }
+
+        #quiz-app {
+            width: 100%;
+            max-width: 960px;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            border: 4px solid #0f2c59;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .top-header {
+            background: radial-gradient(circle at center, #103b70 0%, #081d3d 100%);
+            padding: 15px 30px 20px 30px;
+            color: #ffffff;
+            border-bottom: 5px solid #38bdf8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header-center { text-align: center; }
+
+        .main-title {
+            font-size: 34px;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1.2;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .sub-title {
+            color: #38bdf8;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 2px 0;
+        }
+
+        .author-name {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .header-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 8px;
+            width: 100%;
+        }
+
+        .progress-bar {
+            background: #10b981;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 35px 0 35px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f2c59;
+        }
+
+        .card-body {
+            padding: 15px 35px 25px 35px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .question-card-container {
+            background: #ffffff;
+            border: 2.5px solid #0f2c59;
+            border-radius: 16px;
+            padding: 15px 20px;
+            box-shadow: 0 6px 15px rgba(15, 44, 89, 0.06);
+        }
+
+        .question-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .badge-q-tag {
+            background: #0f2c59;
+            color: #ffffff;
+            padding: 5px 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .q-text-content {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: right;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: #0284c7;
+            background: #f0f9ff;
+            transform: translateY(-2px);
+        }
+
+        .opt-letter {
+            width: 32px;
+            height: 32px;
+            background: #e2e8f0;
+            color: #0f2c59;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .opt-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            flex-grow: 1;
+            padding: 0 12px;
+        }
+
+        .option-btn.correct {
+            background: #ecfdf5 !important;
+            border-color: #10b981 !important;
+        }
+        .option-btn.correct .opt-letter {
+            background: #10b981 !important;
+            color: #ffffff !important;
+        }
+
+        .option-btn.wrong {
+            background: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+        .option-btn.wrong .opt-letter {
+            background: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        .bottom-footer {
+            background: linear-gradient(115deg, #07172f 0%, #122d50 51%, #07172f 100%);
+            border-top: 4px solid #d4af37;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .footer-sec {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-sec-center { text-align: center; padding: 6px 18px; border-left: 1px solid rgba(212,175,55,.35); border-right: 1px solid rgba(212,175,55,.35); }
+        .footer-owner { font-size: 17px; font-weight: 900; color: #f6d77e; text-shadow: 0 1px 2px rgba(0,0,0,.2); }
+
+        .footer-icon-circle {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(145deg, #fff1b7 0%, #d4af37 55%, #a77c20 100%);
+            border: 1.5px solid #ffe4a3;
+            box-shadow: 0 2px 10px rgba(212,175,55,0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .footer-text-title {
+            font-size: 11px;
+            color: #f0d58a;
+            font-weight: 700;
+        }
+
+        .footer-text-val {
+            font-size: 14px;
+            font-weight: 800;
+            direction: ltr;
+            color: #fff9e8;
+        }
+        .bottom-footer a.footer-text-val:hover { color: #f6d77e; text-decoration: underline !important; }
+        @media (max-width: 620px) {
+            .bottom-footer { gap: 14px; flex-wrap: wrap; justify-content: center; padding: 15px; }
+            .footer-sec-center { order: -1; width: 100%; border-left: 0; border-right: 0; border-bottom: 1px solid rgba(212,175,55,.3); padding-bottom: 10px; }
+            .footer-text-val { font-size: 12px; }
+        }
+
+        #result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .result-score {
+            font-size: 48px;
+            font-weight: 900;
+            color: #10b981;
+            margin: 15px 0;
+        }
+
+        .btn-restart {
+            background: #0f2c59;
+            color: #ffffff;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .main-controls, .progress-bar-container, .status-row { display: none !important; }
+            #quiz-app { box-shadow: none; border: 2px solid #0f2c59; max-width: 100%; }
+        }
+
+        /* واجهة مشاركة حديثة مستوحاة من القالب المرجعي */
+        :root { --gold:#d4af37; --gold-soft:#f7e4a2; --navy:#071b38; }
+        body { background:radial-gradient(ellipse at 50% 0%,#19365e 0%,#08142a 58%,#050c1b 100%); }
+        .main-controls {max-width:980px;border:1px solid #b99644;border-radius:22px;background:linear-gradient(130deg,#101e39,#0c1730);box-shadow:0 16px 40px #0006;padding:15px;gap:9px;}
+        .btn-ctrl {border-radius:12px;min-height:44px;box-shadow:inset 0 1px #ffffff25;}
+        .btn-ctrl:focus-visible,.share-action:focus-visible {outline:3px solid #f9d67f;outline-offset:3px;}
+        .btn-share-wa {background:linear-gradient(125deg,#128c50,#25d366);}
+        .btn-share-tg {background:linear-gradient(125deg,#1479a8,#2aabee);}
+        .btn-share-img {background:linear-gradient(125deg,#78571b,#b88d35);border:1px solid #f6d77e;}
+        #quiz-app {border-color:#b59649;box-shadow:0 25px 65px #0009;}
+        .top-header {border-bottom-color:var(--gold);}
+        .main-title {text-shadow:0 3px 14px #0005;}
+        .question-card-container {border-color:#b9974d;box-shadow:0 6px 20px #9e792018;}
+        .badge-q-tag {background:linear-gradient(125deg,#081b38,#173f6d);border:1px solid var(--gold);color:#ffe6a0;}
+        .bottom-footer {border-top-color:var(--gold);}
+        .share-strip {width:min(960px,100%);margin:0 auto 18px;background:#0f2242;border:1px solid #a98b47;border-radius:18px;padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;color:#f5e5b6;box-shadow:0 10px 28px #0004;}
+        .share-strip strong {font-weight:900;font-size:14px;}
+        .share-action {color:white;border:0;border-radius:12px;padding:10px 18px;font:800 14px Cairo, sans-serif;cursor:pointer;}
+        .share-action.wa {background:#138d56}.share-action.tg {background:#218fc5}.share-action.img {background:#9a712c}.share-action.copy,.btn-copy {background:linear-gradient(120deg,#8a631d,#ba903f);color:white;border:1px solid #e4bb61}
+        #share-feedback {width:100%;text-align:center;font-size:12px;color:#ffdd8e;min-height:1em;}
+        @media(max-width:650px){.main-controls{border-radius:17px}.btn-ctrl{flex:1 1 140px;justify-content:center}.share-strip{padding:12px}.share-action{flex:1 1 130px}.q-text-content{font-size:17px}.options-grid{grid-template-columns:1fr}.top-header{padding:14px 10px}.main-title{font-size:24px}.bottom-footer{overflow-wrap:anywhere}}
+        .option-btn.correct .opt-text::after { content:"  ✅"; font-size:21px; }
+
+        .btn-pro { background: linear-gradient(135deg,#6d28d9,#0ea5e9); border: 1px solid rgba(255,255,255,.18); }
+        .btn-pro:hover { filter: brightness(1.08); }
+        .btn-pro.active { background: linear-gradient(135deg,#4c1d95,#0369a1); box-shadow: 0 0 0 2px rgba(234,203,120,.35) inset; }
+
+        #pro-student-screen { display:none; padding: 16px 34px 28px; }
+        .student-hero {
+            background: linear-gradient(135deg, #0b2548 0%, #113c70 60%, #0a2342 100%);
+            border: 2px solid #d4af37;
+            border-radius: 22px;
+            padding: 18px 20px;
+            color: #fff;
+            box-shadow: 0 18px 35px rgba(11,37,72,.18);
+            margin-bottom: 16px;
+        }
+        .student-hero-top { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+        .student-hero-title { font-size: 24px; font-weight: 900; color:#fff; }
+        .student-hero-sub { font-size: 14px; color:#f8dd96; font-weight:800; margin-top:4px; }
+        .student-hero-badge { background: linear-gradient(135deg,#f7d87b,#c59222); color:#10243f; border-radius:999px; padding:10px 16px; font-size:13px; font-weight:900; box-shadow:0 6px 15px rgba(212,175,55,.25); }
+        .student-q-card {
+            background: linear-gradient(180deg,#ffffff 0%, #f7fbff 100%);
+            border: 2px solid #cae3fb;
+            border-right: 8px solid #d4af37;
+            border-radius: 22px;
+            padding: 22px 24px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 22px rgba(12,74,124,.08);
+        }
+        .student-q-head { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:12px; flex-wrap:wrap; }
+        .student-kicker { color:#0c4a7c; font-size:14px; font-weight:900; }
+        .student-q-badge {
+            background: linear-gradient(135deg,#0f2c59,#1d4f91);
+            color:#f3d47a; border:1.5px solid #d4af37; border-radius:999px;
+            padding:8px 16px; font-size:14px; font-weight:900;
+        }
+        .student-q-text { color:#0f172a; font-size:28px; line-height:1.8; font-weight:900; }
+        .student-options-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+        .student-option {
+            position:relative;
+            background: linear-gradient(180deg,#ffffff 0%, #f8fbff 100%);
+            border:2px solid #d7e6f5;
+            border-radius:20px;
+            padding:16px 18px 16px 18px;
+            cursor:pointer;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            display:flex; align-items:flex-start; gap:14px;
+            min-height: 92px;
+            box-shadow: 0 6px 18px rgba(15,44,89,.06);
+        }
+        .student-option:hover:not([disabled]) { transform: translateY(-3px); border-color:#72b0e3; box-shadow:0 12px 25px rgba(15,44,89,.10); }
+        .student-option[disabled] { cursor: default; }
+        .student-option-letter {
+            width:42px;height:42px;flex:0 0 42px;border-radius:14px;
+            background:linear-gradient(135deg,#eef4fa,#d9e8f6); color:#0f2c59;
+            display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;
+            border:1px solid #c5d8ea;
+        }
+        .student-option-text { flex:1; color:#1e293b; font-size:18px; line-height:1.75; font-weight:800; }
+        .student-option.correct { border-color:#0e9f6e !important; background:linear-gradient(180deg,#f0fdf7,#e8fff4); }
+        .student-option.correct .student-option-letter { background:linear-gradient(135deg,#16a34a,#059669); color:#fff; border-color:#0b8a59; }
+        .student-option.correct::after {
+            content:'✅ الإجابة الصحيحة'; position:absolute; top:10px; left:12px;
+            background:#0f9f6c; color:#fff; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:900;
+        }
+        .student-option.wrong { border-color:#ef4444 !important; background:linear-gradient(180deg,#fff5f5,#fff0f0); }
+        .student-option.wrong .student-option-letter { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; border-color:#c81f1f; }
+        .student-action-row { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:16px 0 12px; }
+        .student-action-btn {
+            border:0; border-radius:16px; padding:12px 18px; cursor:pointer; color:#fff;
+            font: 900 14px Cairo, sans-serif; box-shadow:0 10px 18px rgba(15,44,89,.12);
+        }
+        .student-action-btn.copy { background:linear-gradient(135deg,#8a631d,#c49328); }
+        .student-action-btn.share { background:linear-gradient(135deg,#0f766e,#0ea5a3); }
+        .student-action-btn.answer { background:linear-gradient(135deg,#1d4ed8,#2563eb); }
+        .student-action-btn.image { background:linear-gradient(135deg,#7c3aed,#a855f7); }
+        .student-encourage {
+            background: linear-gradient(135deg,#fff8e4 0%, #fff4d5 100%);
+            border: 1px solid #efcf72;
+            color:#6b4f12;
+            border-radius:18px;
+            padding:14px 18px;
+            font-size:16px;
+            font-weight:900;
+            text-align:center;
+            box-shadow:0 8px 18px rgba(197,146,34,.08);
+        }
+        .student-encourage.success { background:linear-gradient(135deg,#e9fff4 0%,#dcfce7 100%); border-color:#75d2a6; color:#065f46; }
+        .student-encourage.retry { background:linear-gradient(135deg,#fff5f5 0%,#fef2f2 100%); border-color:#f3a1a1; color:#991b1b; }
+        .student-copy-feedback { text-align:center; font-size:12px; color:#7a6329; min-height:1em; margin-top:6px; font-weight:800; }
+        @media(max-width:800px){ .student-options-grid{grid-template-columns:1fr;} .student-q-text{font-size:23px;} }
+        @media(max-width:650px){ #pro-student-screen{padding:14px 14px 24px;} .student-hero-title{font-size:20px} .student-q-text{font-size:20px} .student-option-text{font-size:16px;} }
+
+        @media print {.share-strip{display:none!important}}
+    /* ===== Professional PDF export styled like the supplied reference ===== */
+#pdf-export-root { display:none; }
+.pdf-export-root, .pdf-export-root * { box-sizing:border-box; font-family:'Cairo','Almarai',sans-serif; }
+.pdf-export-root { direction:rtl; }
+
+@page { size:A4 portrait; margin:6mm; }
+
+@media print {
+    html, body {
+        background:#ffffff !important;
+        margin:0 !important;
+        padding:0 !important;
+        min-height:auto !important;
+        display:block !important;
+    }
+    body > *:not(#pdf-export-root) { display:none !important; }
+    #pdf-export-root { display:block !important; }
+    #pdf-export-root .pdf-page {
+        width:198mm;
+        min-height:285mm;
+        margin:0 auto 4mm;
+        page-break-after:always;
+        break-after:page;
+        overflow:hidden;
+        background:#ffffff;
+        border:1.2px solid #9ab9d6;
+        position:relative;
+    }
+    #pdf-export-root .pdf-page:last-child {
+        page-break-after:auto;
+        break-after:auto;
+    }
+}
+
+.pdf-page {
+    display:flex;
+    flex-direction:column;
+    padding:0;
+}
+
+.pdf-topbar {
+    background:linear-gradient(90deg,#0c4f86 0%, #134f83 25%, #0d3f6a 60%, #0a3357 100%);
+    color:#ffffff;
+    min-height:18mm;
+    display:grid;
+    grid-template-columns:24mm 1fr 44mm;
+    align-items:center;
+    padding:0 5mm;
+    border-bottom:1px solid #0c3860;
+}
+
+.pdf-top-pill {
+    justify-self:start;
+    width:max-content;
+    border:1.6px solid rgba(255,255,255,.8);
+    color:#ffffff;
+    border-radius:999px;
+    padding:2px 9px;
+    font-size:9.5px;
+    font-weight:900;
+    line-height:1.4;
+}
+
+.pdf-title-wrap {
+    text-align:center;
+    line-height:1.35;
+}
+
+.pdf-main-title {
+    font-size:14px;
+    font-weight:900;
+    color:#ffffff;
+}
+
+.pdf-sub-title {
+    font-size:8.8px;
+    font-weight:800;
+    color:#d5efff;
+    margin-top:1px;
+}
+
+.pdf-meta-top {
+    justify-self:end;
+    text-align:left;
+    font-size:8.5px;
+    font-weight:800;
+    color:#ffdf8a;
+    line-height:1.5;
+}
+
+.pdf-page-content {
+    padding:3.5mm 4mm 2.5mm;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+
+.pdf-grid {
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:2.6mm 3mm;
+    align-content:start;
+    overflow:hidden;
+}
+
+.pdf-card {
+    position:relative;
+    border:1.15px solid #80abd0;
+    border-radius:7px;
+    padding:3.2mm 3mm 2.6mm;
+    background:#fbfdff;
+    box-shadow: inset 0 0 0 .5px rgba(255,255,255,.7);
+    break-inside:avoid;
+}
+
+.pdf-card-num {
+    position:absolute;
+    top:2.1mm;
+    left:2.2mm;
+    min-width:10.5mm;
+    text-align:center;
+    background:#ffffff;
+    border:1.2px solid #6b9fca;
+    border-radius:999px;
+    padding:0.5mm 2mm;
+    color:#184d7b;
+    font-size:8px;
+    font-weight:900;
+    line-height:1.3;
+}
+
+.pdf-card-title {
+    padding-left:13mm;
+    color:#0e4b81;
+    font-size:9.4px;
+    font-weight:900;
+    line-height:1.55;
+    margin-bottom:1.3mm;
+}
+
+.pdf-card-options {
+    border-top:1px dashed #cbdceb;
+    padding-top:1.4mm;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:1mm;
+}
+
+.pdf-card-option {
+    display:flex;
+    align-items:flex-start;
+    gap:1.6mm;
+    color:#183550;
+    font-size:7.8px;
+    font-weight:700;
+    line-height:1.5;
+}
+
+.pdf-card-letter {
+    width:5.2mm;
+    height:5.2mm;
+    flex:0 0 5.2mm;
+    border-radius:3px;
+    background:#e8f2fb;
+    border:1px solid #b8d0e7;
+    color:#0f426d;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:7.2px;
+    font-weight:900;
+    margin-top:.1mm;
+}
+
+.pdf-card-option-text {
+    flex:1;
+    min-width:0;
+}
+
+.pdf-bottom-note {
+    margin-top:3mm;
+    border:1.3px solid #ddb75a;
+    border-radius:6px;
+    min-height:18mm;
+    display:grid;
+    grid-template-columns:30mm 1fr 41mm;
+    align-items:center;
+    padding:2.2mm 3mm;
+    gap:3mm;
+    background:linear-gradient(180deg,#fffdfa 0%, #fffaf1 100%);
+}
+
+.pdf-bottom-note .qr-css {
+    width:21mm !important;
+    height:21mm !important;
+    border:2.2px solid #fff !important;
+    border-radius:3px !important;
+    margin:0 auto !important;
+    background:#fff !important;
+}
+.pdf-bottom-note .qr-css i { background:#000 !important; }
+
+.pdf-note-qr-wrap {
+    text-align:center;
+}
+.pdf-note-qr-label {
+    color:#0f456f;
+    font-size:6.8px;
+    font-weight:900;
+    margin-top:.8mm;
+}
+
+.pdf-note-center {
+    text-align:center;
+    line-height:1.65;
+}
+.pdf-note-main {
+    color:#8a6617;
+    font-size:8.1px;
+    font-weight:900;
+}
+.pdf-note-sub {
+    color:#375370;
+    font-size:7.1px;
+    font-weight:800;
+}
+
+.pdf-note-contact {
+    text-align:right;
+    line-height:1.8;
+}
+.pdf-note-contact .lbl {
+    color:#9b7524;
+    font-size:6.8px;
+    font-weight:900;
+}
+.pdf-note-contact .val {
+    color:#163a5a;
+    font-size:8.3px;
+    font-weight:900;
+    direction:ltr;
+}
+
+.pdf-footerbar {
+    background:linear-gradient(90deg,#0a3153 0%, #113f66 55%, #0a3153 100%);
+    min-height:10mm;
+    color:#ffffff;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    align-items:center;
+    padding:0 4mm;
+    gap:3mm;
+    border-top:1px solid #0a2c4a;
+}
+
+.pdf-footer-item {
+    display:flex;
+    align-items:center;
+    gap:1.8mm;
+    font-size:7.2px;
+    font-weight:800;
+    color:#e7f6ff;
+    min-width:0;
+}
+.pdf-footer-item.center { justify-content:center; text-align:center; }
+.pdf-footer-item.end { justify-content:flex-end; text-align:left; }
+.pdf-footer-icon {
+    width:4.6mm;
+    height:4.6mm;
+    border-radius:50%;
+    background:#f0c04d;
+    color:#113e63;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:6.5px;
+    font-weight:900;
+    flex:0 0 4.6mm;
+}
+.pdf-footer-text {
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+/* Answer marking and top/bottom contact information for PDF sheets */
+.pdf-topbar { grid-template-columns:22mm 1fr 48mm; }
+.pdf-meta-top { font-size:7.5px; line-height:1.75; direction:rtl; text-align:left; }
+.pdf-correct-option { background:#e8fbef; border:1px solid #20a66c; padding:1.1mm; border-radius:4px; }
+.pdf-correct-option .pdf-card-letter { background:#158752; color:#ffffff; border-color:#158752; }
+.pdf-correct-option .pdf-card-option-text { color:#095a36; font-weight:900; }
+.pdf-correct-mark { display:inline-block; margin-right:2mm; color:#047646; font-size:7.5px; font-weight:900; white-space:nowrap; }
+@media print { .pdf-correct-option { background:#e8fbef!important; } }
+
+/* Fix phone/username direction in exported PDF to match the card exactly */
+.pdf-ltr-inline{
+    direction:ltr !important;
+    unicode-bidi:isolate !important;
+    display:inline-block !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+}
+.pdf-meta-top{
+    direction:rtl !important;
+}
+.pdf-meta-top .pdf-ltr-inline{
+    color:inherit;
+}
+.pdf-note-contact .val,
+.pdf-footer-text.phone,
+.pdf-footer-text.tg{
+    direction:ltr !important;
+    unicode-bidi:isolate !important;
+    display:inline-block !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+}
+
+
+/* شريط بيانات التواصل الفاخر: سطر واحد ثابت أسفل كل صفحة PDF */
+.pdf-lux-footer {
+ display:flex!important; direction:rtl!important; justify-content:space-evenly!important;
+ align-items:center!important; gap:2mm!important; padding:1.4mm 4mm!important;
+ height:12mm!important; min-height:12mm!important; flex-shrink:0!important;
+ border-top:2px solid #cfa44b!important;
+ background:linear-gradient(100deg,#061a33,#133f6a 48%,#061a33)!important;
+}
+.pdf-lux-item{display:inline-flex;align-items:center;justify-content:center;gap:1.5mm;white-space:nowrap;
+ font-size:8.2px;font-weight:900;color:#fff6db;line-height:1.3;}
+.pdf-lux-name{color:#ffda79;font-size:9px}
+.pdf-lux-mark{display:inline-flex;align-items:center;justify-content:center;width:5.2mm;height:5.2mm;
+ border-radius:50%;color:#092a4a;background:#eac25b;font-size:8.5px;flex-shrink:0;}
+.pdf-lux-separator{height:5.5mm;width:1px;flex:none;background:rgba(247,211,128,.45)}
+.pdf-lux-footer .pdf-ltr-inline{direction:ltr!important;unicode-bidi:isolate!important;
+ display:inline-block!important;color:inherit!important;white-space:nowrap!important;}
+@media print{.pdf-lux-footer{break-inside:avoid!important;page-break-inside:avoid!important;}}
+
+/* ضمان ظهور شريط التواصل أسفل كل صفحة مطبوعة */
+@media print {
+  #pdf-export-root .pdf-page {
+    width:198mm!important;height:284mm!important;min-height:284mm!important;
+    max-height:284mm!important;display:flex!important;flex-direction:column!important;
+    margin:0!important; padding:0!important;overflow:hidden!important;
+    page-break-after:always!important;break-after:page!important;
+  }
+  #pdf-export-root .pdf-page:last-child {page-break-after:auto!important;break-after:auto!important;}
+  #pdf-export-root .pdf-topbar {flex:0 0 19mm!important;min-height:19mm!important;}
+  #pdf-export-root .pdf-page-content {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;}
+  #pdf-export-root .pdf-grid {min-height:0!important;overflow:hidden!important;align-content:start!important;}
+  #pdf-export-root .pdf-footerbar.pdf-lux-footer {
+    display:flex!important;position:relative!important;flex:0 0 12mm!important;
+    height:12mm!important;min-height:12mm!important;width:100%!important;
+    visibility:visible!important;opacity:1!important;bottom:0!important;
+    background:#0b2b4c!important;color:#fff!important;
+    -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;
+  }
+}
+
+/* PDF layout must have real A4 dimensions WHILE pagination is calculated. */
+#pdf-export-root {width:198mm!important;}
+#pdf-export-root .pdf-page {height:284mm!important;min-height:284mm!important;max-height:284mm!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+#pdf-export-root .pdf-topbar {flex:0 0 19mm!important;min-height:19mm!important;}
+#pdf-export-root .pdf-page-content {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;}
+#pdf-export-root .pdf-grid {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;grid-auto-rows:max-content!important;align-content:start!important;}
+#pdf-export-root .pdf-footerbar.pdf-lux-footer {position:relative!important;flex:0 0 12mm!important;height:12mm!important;min-height:12mm!important;z-index:2!important;}
+@media print {#pdf-export-root .pdf-page {margin:0!important;}}
+
+
+/* PDF-only mode: hide every other interaction and leave just the all-cards PDF action */
+.pdf-only-controls { width:min(960px,100%);justify-content:center; }
+.pdf-only-button { font-size:17px; padding:13px 30px; justify-content:center; }
+#pro-student-screen .student-action-row, #result-screen .btn-restart { display:none!important; }
+@media print { .pdf-only-controls {display:none!important;} }
+
+        /* عبارة دعوة الانضمام داخل التذييل ـ تظهر في الشاشة والتصدير */
+        .bottom-footer { flex-wrap: wrap; row-gap: 12px; }
+        .footer-join-message {
+            flex: 0 0 100%; width:100%; order: 9; text-align:center;
+            padding:12px 8px 4px; margin-top:2px;
+            border-top:1px solid rgba(212,175,55,.5);
+            color:#f6d77e; font-size:clamp(14px, 1.9vw, 21px);
+            line-height:1.75; font-weight:900; letter-spacing:0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- أزرار التحكم الشاملة (التنقل + التصدير) -->
+    <div class="main-controls pdf-only-controls">
+        <button class="btn-ctrl btn-nav" id="btn-prev" type="button" onclick="prevQuestion()">➔ السابق</button>
+        <button class="btn-ctrl btn-nav" id="btn-next-top" type="button" onclick="nextQuestion()">التالي ⬅</button>
+        <button class="btn-ctrl btn-pdf pdf-only-button" type="button" onclick="exportToPDF()">📄 تصدير جميع البطاقات PDF</button>
+    </div>
+
+    <div id="quiz-app">
+        <div class="top-header">
+            <div class="header-icon-box">📖</div>
+            <div class="header-center">
+                <div class="main-title">الرخصة المهنية عام</div>
+                <div class="sub-title" style="max-width:690px;line-height:1.6;font-size:14px">المعيار الأول: الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية</div>
+                <div class="author-name">إعداد / إبراهيم أبوزيد — اختبار المعيار الأول</div>
+                <div style="color:#f4cf74;font-size:13px;font-weight:900;margin-top:5px">#الرخصة-المهنية_عام</div>
+            </div>
+            <div class="header-icon-box">⏳</div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div id="quiz-screen">
+            <div class="status-row">
+                <span id="question-count">الأسئلة: 0</span>
+                <span id="score-count">النقاط: 0</span>
+            </div>
+
+            <div id="pro-student-screen">
+                <div class="student-hero">
+                    <div class="student-hero-top">
+                        <div>
+                            <div class="student-hero-title">شاشة السؤال الاحترافية</div>
+                            <div class="student-hero-sub">اقرأ السؤال جيدًا، ثم اختر الإجابة الصحيحة — أنت قادر على الحل 🌟</div>
+                        </div>
+                        <div class="student-hero-badge">🎯 فكّر أولاً ثم أجب</div>
+                    </div>
+                </div>
+                <div class="student-q-card">
+                    <div class="student-q-head">
+                        <div class="student-kicker">اختر الإجابة الأنسب من بين الخيارات التالية</div>
+                        <div class="student-q-badge" id="pro-q-badge">سؤال 1</div>
+                    </div>
+                    <div class="student-q-text" id="pro-q-text">نص السؤال...</div>
+                </div>
+                <div class="student-options-grid" id="pro-options-container"></div>
+                <div class="student-action-row">
+                    <button class="student-action-btn copy" onclick="copyQuestionOnly()">📋 نسخ السؤال والخيارات</button>
+                    <button class="student-action-btn share" onclick="shareStudentQuestion()">💬 مشاركة السؤال للطلاب</button>
+                    <button class="student-action-btn image" onclick="copyCurrentCardAsImage('professional')">📋 نسخها كصورة</button>
+                    <button class="student-action-btn answer" onclick="copyShareMessage()">✅ نسخ نسخة الإجابة الكاملة</button>
+                </div>
+                <div class="student-encourage" id="student-encourage">💡 شجّع طلابك على المحاولة: اختر الإجابة التي تراها صحيحة، ثم تحقّق من الحل.</div>
+                <div class="student-copy-feedback" id="student-copy-feedback"></div>
+            </div>
+
+            <div class="card-body" id="standard-card-body">
+                <div class="question-card-container">
+                    <div class="question-header-row">
+                        <div class="badge-q-tag" id="q-badge">جاهز للأسئلة</div>
+                        <div class="q-text-content" id="q-text">نص السؤال...</div>
+                    </div>
+                </div>
+
+                <div class="options-grid" id="options-container"></div>
+            </div>
+        </div>
+
+        <div id="result-screen">
+            <h2 style="font-size: 28px; color: #0f2c59; font-weight: 900;">اكتمل الاختبار بنجاح!</h2>
+            <div class="result-score" id="final-score">0 / 0</div>
+            <p id="result-message" style="font-size: 18px; font-weight: 700; color: #475569;"></p>
+            <button class="btn-restart" onclick="restartQuiz()">إعادة الاختبار 🔄</button>
+        </div>
+
+        <div class="bottom-footer">
+            <div class="footer-sec">
+                <div class="footer-icon-circle">📞</div>
+                <div>
+                    <div class="footer-text-title">رقم الهاتف</div>
+                    <div class="footer-text-val" dir="ltr">+966 55 783 1353</div>
+                </div>
+            </div>
+            <div class="footer-sec-center">
+                <div class="footer-owner">إبراهيم أبوزيد</div>
+                <div style="color:#eacb78;font-size:11px;font-weight:800">قناة الرخصة المهنية عام</div>
+            </div>
+            <div class="footer-sec" style="direction: ltr;">
+                <div class="footer-icon-circle">✈</div>
+                <div style="text-align: right;">
+                    <div class="footer-text-title">قناة الرخصة المهنية عام</div>
+                    <a class="footer-text-val" href="https://t.me/+ZakELIR9__g4NmU0" target="_blank" rel="noopener noreferrer" style="text-decoration:none;font-size:12px">t.me/+ZakELIR9__g4NmU0</a>
+                    <div class="footer-text-title">حساب تليجرام</div>
+                    <a class="footer-text-val" href="https://t.me/myibhistoricy" target="_blank" rel="noopener noreferrer" style="text-decoration:none;font-size:12px">@myibhistoricy</a>
+                </div>
+            </div>
+            <div class="footer-join-message">انضم الينا  واحصل على ملفات شاملة واختبارات إلكترونية شاملة</div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+    {
+        "num": 1,
+        "q": "عندما يلاحظ المعلم الممارس أن أحد طلابه يبدي جهلاً بتاريخ وطنه ورموزه التاريخية، فإن التصرف التربوي الأنسب هو:",
+        "options": [
+            "تحويل الطالب مباشرة إلى لجنة الوكيل لإتخاذ الإجراء الإداري اللازم حياله.",
+            "يوظف خبرات ومواقف وأنشطة تعليمية تعزز الاعتزاز بالهوية الوطنية والتراث الثقافي في نفوس طلابه.",
+            "الاكتفاء بتوجيه تنبيه شفهي للطالب بعدم تكرار هذا التقصير داخل الفصل.",
+            "تجاهل المداخلة والانتقال السريع لتغطية محتوى الدرس المقرر في الخطة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 2,
+        "q": "عندما يُريد المعلم الممارس التعامل مع التنوع الثقافي للطلاب الوافدين في صفه، فإن الممارسة التدريسية المثلى هي:",
+        "options": [
+            "عزل الطلاب الوافدين في أنشطة مستقلة لضمان عدم التأثير على ثقافة المجتمع المحلي.",
+            "يظهر مرونة وانفتاحاً على الثقافات الأخرى، ويدعم ممارساته التدريبية بأمثلة إيجابية من الثقافات الأخرى، ويصمم أنشطة وواجبات تعزز احترام ثقافة الآخر، ووجهات النظر المختلفة.",
+            "إجبار الطلاب الوافدين على الالتزام الكامل بالعادات المحلية المجرّدة دون نقاش.",
+            "التركيز الحصري على الثقافة المحلية وتجنب أي إشارة للثقافات الأخرى منعاً للبلبلة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 3,
+        "q": "كيف يُترجم المعلم الممارس ولاءه وانتمائه للوطن وقيادته داخل بيئة التعلم اليومية؟",
+        "options": [
+            "من خلال ترديد الشعارات الوطنية بشكل جماعي في بداية كل حصة دراسية.",
+            "يعبر من خلال أفكاره وأنشطته عن ولائه وانتمائه للوطن وقيادته، ويوظف المواقف والأنشطة التعليمية لتعزيز ذلك في نفوس طلابه.",
+            "الاكتفاء برفع العلم السعودي على مبنى الفصل طوال العام الدراسي.",
+            "إسناد الأنشطة الوطنية حصرياً للطلاب المتفوقين أكاديمياً فقط."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 4,
+        "q": "لتعزيز احترام وجهات النظر المختلفة بين الطلاب في نقاش صفي متعدد الثقافات، يقوم المعلم الممارس بـ:",
+        "options": [
+            "إيقاف النقاش فوراً إذا ظهرت وجهات نظر متعارضة مع الثقافة السائدة.",
+            "يظهر مرونة ويصمم أنشطة وواجبات تعزز احترام ثقافة الآخر، ووجهات النظر المختلفة.",
+            "فرض رأي الأغلبية كحقيقة مطلقة يجب على الجميع تبنيها.",
+            "ترك الطلاب ليتدبروا أمرهم دون توجيه تربوي أو ضبط للحوار."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 5,
+        "q": "عندما يصمم المعلم الممارس درساً يستهدف إبراز المنجزات الحضارية للوطن، فإنه يعتمد على:",
+        "options": [
+            "سرد المعلومات التاريخية المجردة وطالب الطلاب بحفظها عن ظهر قلب.",
+            "يوظف خبرات ومواقف وأنشطة تعليمية تدعم الاعتزاز بالهوية الوطنية والتراث الثقافي في نفوس طلابه.",
+            "مقارنة الإنجازات المحلية بدول أخرى بشكل يقلل من شأن الآخرين.",
+            "الاعتماد على النصوص النظرية الواردة في الكتاب المدرسي دون ربطها بالواقع."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 6,
+        "q": "إذا واجه المعلم الممارس حالة تنمر بين الطلاب بسبب اختلاف لهجاتهم أو ثقافاتهم المحلية الفرعية، فإنه يقوم بـ:",
+        "options": [
+            "معاقبة المتنمر بحرمانه نهائياً من حصص النشاط الرياضي.",
+            "يدعم ممارساته التدريبية بأمثلة إيجابية تعزز احترام ثقافة الآخر وتنبذ التعصب.",
+            "تجاهل الحادثة طالما أنها وقعت خارج أوقات الحصص الرسمية.",
+            "تحويل الأطراف المتنازعة للمرشد الطلابي دون تعقيب تربوي صفي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 7,
+        "q": "لربط محتوى مادة التدريس بالتراث الثقافي الوطني، يحرص المعلم الممارس على:",
+        "options": [
+            "حصر التراث في حصص التربية الفنية والوطنية فقط.",
+            "يوظف خبرات ومواقف وأنشطة تعليمية تدعم الاعتزاز بالهوية الوطنية وبالتراث الثقافي في نفوس طلابه.",
+            "إرغام الطلاب على حفظ المتاحف والآثار صماً دون فهم.",
+            "الاعتماد الكلي على المراجع الأجنبية المترجمة في التدريس."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 8,
+        "q": "عندما يُبدي أحد الطلاب تعصباً سلبياً لثقافة وافدة معينة على حساب الهوية الوطنية، فإن المعلم الممارس يتصرف بـ:",
+        "options": [
+            "إبداء مرونة وانفتاح مع توجيه تربوي يوازن بين احترام الآخر والاعتزاز بالهوية.",
+            "يظهر مرونة وانفتاحاً على الثقافات الأخرى، ويدعم ممارساته التدريبية بأمثلة إيجابية، ويصمم أنشطة تعزز الهوية واحترام ثقافة الآخر.",
+            "زجر الطالب علناً ووصفه بضعف الانتماء أمام زملائه.",
+            "حرمانه من درجات أعمال السنة لتعديه الثقافي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 9,
+        "q": "التصرف الأمثل للمعلم الممارس عند التحضير للاحتفاء بيوم التأسيس أو اليوم الوطني داخل الصف هو:",
+        "options": [
+            "الاكتفاء بتعليق الأعلام واللافتات الصامتة على الجدران.",
+            "يوظف خبرات ومواقف وأنشطة تعليمية تدعم الاعتزاز بالهوية الوطنية وبالتراث الثقافي في نفوس طلابه.",
+            "منح الطلاب إجازة اختيارية من حضور الحصص.",
+            "إلقاء محاضرة مطولة ونظرية طوال اليوم الدراسي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 10,
+        "q": "لمعالجة القصور في معرفة المواقع التاريخية الوطنية لدى الطلاب، يقوم المعلم الممارس بـ:",
+        "options": [
+            "تكليف الطلاب بنسخ أسماء المدن التاريخية مئة مرة.",
+            "يوظف خبرات ومواقف وأنشطة تعليمية تدعم الاعتزاز بالهوية الوطنية والتراث الثقافي في نفوس طلابه.",
+            "تجاهل النقص المعرفي لكونه خارج اختبار التحصيل النهائي.",
+            "الاستعانة بالمعلم المستجد لتولى هذه المهمة الفردية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 11,
+        "q": "في صف يضم طلاباً من ثقافات متعدّدة، يسعى المعلم الممارس إلى بناء بيئة صفية قائمة على:",
+        "options": [
+            "تذويب كافة الفروق الثقافية وصهرها في قالب واحد مفروض.",
+            "يظهر مرونة وانفتاحاً على الثقافات الأخرى، ويدعم ممارساته التدريبية بأمثلة إيجابية، ويصمم أنشطة تعزز احترام ثقافة الآخر ووجهات النظر المختلفة.",
+            "عزل الثقافات الوافدة عن المشاركة في الأنشطة الجماعية.",
+            "إعطاء الأفضلية المطلقة للطلاب المحليين في كل الأنشطة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 12,
+        "q": "كيف يعزز المعلم الممارس الشعور بالفخر بالتراث الصناعي والحرفي للوطن؟",
+        "options": [
+            "بتنظيم معرض صفي يبرز الحرف التقليدية ويوظفها عبر أنشطة تعزز التراث الثقافي في نفوس الطلاب.",
+            "باقتصار الشرح على الصناعات التكنولوجية الحديثة المستوردة.",
+            "بإلغاء أي حديث عن الماضي والتركيز حصرياً على المستقبل.",
+            "بتكليف الطلاب بشراء قطع أثرية باهظة الثمن للمدرسة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 13,
+        "q": "الإجراء التربوي السليم لمعلم ممارس يلاحظ ضعف تواصل الطلاب الوافدين مع زملائهم المحليين هو:",
+        "options": [
+            "تركهم منعزلين لعدم رغبتهم في الاندماج الاجتماعي.",
+            "يصمم أنشطة وواجبات تعزز احترام ثقافة الآخر ووجهات النظر المختلفة، ويدعم ممارساته التدريبية بأمثلة إيجابية.",
+            "نقل الطلاب الوافدين إلى فصل آخر يضم جنسيات مشابهة.",
+            "مطالبة إدارة المدرسة بفصل دراسي خاص بالوافدين."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 14,
+        "q": "عندما يُسأل المعلم الممارس عن سبب اهتمامه بتعزيز الهوية الوطنية، تكون الإجابة المهنية المستندة للمعيار:",
+        "options": [
+            "لأنها مادة مقررة في جدول الاختبارات الوزارية الرسمية.",
+            "لكونه يعبر من خلال أفكاره وأنشطته عن ولائه وانتمائه للوطن وقيادته ويوظف المواقف لتعزيز ذلك في نفوس طلابه.",
+            "لكونها تزيد من درجات التقويم السنوي للمعلم أمام المشرف.",
+            "لأنها تقلل من مشكلات المشاجرات بين الطلاب في الفسحة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 15,
+        "q": "التفاعل الإيجابي مع الثقافات الأخرى للمعلم الممارس يتمثل في:",
+        "options": [
+            "قبول كل ما يأتي من الخارج دون تمحيص أو نقد.",
+            "يظهر مرونة وانفتاحاً على الثقافات الأخرى، ويدعم ممارساته التدريبية بأمثلة إيجابية من الثقافات الأخرى.",
+            "إغلاق باب النقاش حول أي ثقافة أجنبية منعاً للفتنة.",
+            "السخرية من العادات المختلفة لتقوية شعور الطلاب بتفوقهم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 16,
+        "q": "لغرس قيم الانتماء الوطني لدى الطلاب ذوي التحصيل المتدني، يعتمد المعلم الممارس على:",
+        "options": [
+            "حرمانهم من الأنشطة الوطنية لعدم قدرتهم على التفاعل.",
+            "يوظف خبرات ومواقف وأنشطة تعليمية تدعم الاعتزاز بالهوية الوطنية والتراث الثقافي في نفوس طلابه لبناء ثقتهم.",
+            "تكليفهم بمهام إدارية شاقة داخل السوار المدرسي.",
+            "فصلهم في مقاعد متقدمة لمراقبة سلوكهم بدقة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 17,
+        "q": "عندما يعرض المعلم الممارس صوراً لرموز الدولة وإنجازاتها، فإنه يهدف إلى:",
+        "options": [
+            "شغل وقت الدرس المتبقي بطريقة ممتعة ومسلية.",
+            "يعبر من خلال أفكاره وأنشطته عن ولائه وانتمائه للوطن وقيادته، ويوظف المواقف والأنشطة التعليمية لتعزيز ذلك في نفوس طلابه.",
+            "تدريب الطلاب على حفظ أسماء المسؤولين صماً.",
+            "تقييم مدى دقة بصر الطلاب وقدرتهم على الوصف."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 18,
+        "q": "التصرف النظامي لمعلم ممارس واجه طالباً يرفض المشاركة في النشاط الوطني المدرسي هو:",
+        "options": [
+            "معاقبته بالخصم الفوري من درجات المادة الدراسية.",
+            "محاورته تربوياً وتوظيف خبرات ومواقف تعليمية ترغبّه في الاعتزاز بالهوية والوطن.",
+            "إرساله فوراً لشرطة المدرسة لتأديبه وسؤاله.",
+            "طرده نهائياً من الفسحة وعدم السماح له بالدخول للفصل."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 19,
+        "q": "تدريس المفاهيم المرتبطة بالتنوع الثقافي في المنهج يتطلب من المعلم الممارس:",
+        "options": [
+            "تهميشها بحجة عدم أهميتها مقارنة بالجانب المعرفي البحت.",
+            "يظهر مرونة وانفتاحاً على الثقافات الأخرى، ويدعم ممارساته التدريبية بأمثلة إيجابية من الثقافات الأخرى، ويصمم أنشطة تعزز احترام ثقافة الآخر.",
+            "التركيز على السلبيات والثغرات في الثقافات الوافدة.",
+            "إسناد شرحها للطلاب كبحث ذاتي دون تدخل منه."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 20,
+        "q": "دور المعلم الممارس في تفعيل الإذاعة المدرسية لخدمة الهوية الوطنية يكمن في:",
+        "options": [
+            "ترك الإذاعة لعشوائية الطلاب دون إشراف أو توجيه.",
+            "يوظف خبرات ومواقف وأنشطة تعليمية تدعم الاعتزاز بالهوية الوطنية والتراث الثقافي السعودي في نفوس طلابه عبر فقراتها.",
+            "قراءة تعميمات الإدارة المدرسية الصباحية فقط.",
+            "إلغاء الإذاعة نهائياً لتوفير وقت الحصص الدراسية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 21,
+        "q": "لتعزيز مهارات التفكير النقدي لدى الطلاب تجاه المؤثرات الثقافية الخارجية، يقوم المعلم الممارس بـ:",
+        "options": [
+            "منع الطلاب من استخدام الإنترنت أو متابعة القنوات العالمية تماماً.",
+            "تصميم أنشطة ومواقف تعليمية توازن بين الاعتزاز بالهوية والانفتاح الواعي على الثقافات الأخرى.",
+            "التركيز على حفظ النصوص التراثية بحذافيرها دون مناقشة معاصرة.",
+            "الاعتماد على آراء الطلاب الشخصية العشوائية دون توجيه قيمي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 22,
+        "q": "عندما يواجه المعلم الممارس تبايناً في لهجات الطلاب داخل الصف وتحدث بينهم سخرية متبادلة:",
+        "options": [
+            "يفرض لهجة موحدة صارمة ويمنع التحدث بغيرها داخل الفصل.",
+            "يدعم ممارساته التدريبية بأمثلة إيجابية تعزز احترام التنوع الثقافي المحلي واللغوي بوصفه غنىً وطنيا.",
+            "يتجاهل الأمر لكونه مجرد دعابة طلابية عابرة.",
+            "يحيل جميع الأطراف لمكتب المدير لاتخاذ العقوبات الصارمة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 23,
+        "q": "لتضمين قيم التسامح والتعايش الثقافي في التقييمات التكوينية، يصمم المعلم الممارس أسئلة تقيس:",
+        "options": [
+            "قدرة الطالب على سرد تواريخ المعارك القديمة بدقة رقمية.",
+            "مدى قدرة المتعلم على احترام وجهات النظر المختلفة وتقبل التنوع الثقافي الإيجابي.",
+            "سرعة حفظ الطالب للمفردات التراثية صماً.",
+            "تفوق الطالب الأكاديمي البحت بمعزل عن السلوكيات."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 24,
+        "q": "التوظيف الأمثل للمواقف الصفية اليومية لمعالجة ضعف الانتماء الوطني لدى طالب معين يتطلب من المعلم الممارس:",
+        "options": [
+            "توبيخه علناً أمام زملائه ليكون عبرة لغيره.",
+            "يعبر من خلال أفكاره وأنشطته عن ولائه ويندج المواقف لتعزيز ذلك في نفوس طلابه واحتواء الطالب.",
+            "تجاهل الطالب كلياً وعدم إشراكه في الأنشطة.",
+            "إسناد مراقبة سلوك الطالب لحراسة المدرسة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 25,
+        "q": "عند تصميم الأنشطة الصفية التي تدمج بين التراث المحلي والمفاهيم العلمية الحديثة، يعتمد المعلم الممارس على:",
+        "options": [
+            "عزل العلوم التطبيقية كلياً عن أي موروث ثقافي محلي.",
+            "يوظف خبرات ومواقف تعليمية تدعم الاعتزاز بالهوية الوطنية والتراث الثقافي في سياق التعلم.",
+            "التركيز على العلوم الغربية وتهميش التاريخ المحلي.",
+            "سرد حكايات خرافية قديمة لا علاقة لها بالمحتوى العلمي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 26,
+        "q": "التوجيه التربوي السليم لمعلم ممارس يلاحظ انعزال طالب وافد عن الأنشطة الاجتماعية للفصل هو:",
+        "options": [
+            "إجباره على المشاركة بقوة وقسوة ليتأقلم سريعاً.",
+            "يصمم أنشطة وواجبات تعزز احترام ثقافة الآخر وتدمجه تدريجياً بروح مرنة ومنفتحة.",
+            "تركه على حاله طالما أنه لا يثير مشاكل سلوكية.",
+            "نقله فوراً لفصل آخر يضم طلاباً من نفس جنسيته."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 27,
+        "q": "لتعزيز الفخر بالرموز الوطنية، يحرص المعلم الممارس على:",
+        "options": [
+            "الاكتفاء بذكر أسمائها مجردة في نهاية العام.",
+            "توظيف المواقف والأنشطة التعليمية لإبراز أدوارها الوطنية وتعميق الانتماء من خلالها.",
+            "مطالبة الطلاب بحفظ سيرتها الذاتية اختبارياً فقط.",
+            "منع الحديث عن الرموز التاريخية خارج حصة التاريخ."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 28,
+        "q": "التعامل الإيجابي مع استفسارات الطلاب حول الثقافات العالمية الجديدة يقتضي من المعلم الممارس:",
+        "options": [
+            "نهر الطلاب واعتبار السؤال خروجاً عن النص المدرسي.",
+            "إظهار مرونة وانفتاحاً على الثقافات الأخرى ودعم التدريس بأمثلة توضح الإيجابي والسلبي في ضوء الهوية.",
+            "تحويل السؤال للمرشد الطلابي لعدم اختصاص المعلم.",
+            "تأييد الثقافة الجديدة بالكامل دون تمحيص تربوي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 29,
+        "q": "قيام المعلم الممارس بتفعيل الأناشيد الوطنية والقصائد التراثية في الأنشطة الصفية يهدف إلى:",
+        "options": [
+            "إشغال الوقت الضائع بحصص الاحتياط والانتظار.",
+            "توظيف خبرات ومواقف تعليمية تدعم الاعتزاز بالهوية والوطن في نفوس الطلاب وجدانياً.",
+            "تدريب الطلاب على الصوتيات الغنائية بحتة.",
+            "تقييم القدرات الموسيقية للطلبة والموهوبين."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 30,
+        "q": "عندما يواجه المعلم الممارس حالة تعصب مناطقي بين الطلاب، فإن خطوته الأولى هي:",
+        "options": [
+            "معاقبة الجميع بالإنذار النهائي بالفصل.",
+            "تصميم بيئات تعلم تعزز احترام التنوع الثقافي المحلي وتنبذ التعصب بمواقف حوارية واعية.",
+            "ترك المتنازعين يتشاجرون حتى يهدؤوا ذاتياً.",
+            "إبلاغ أولياء الأمور فوراً للحضور للمدرسة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 31,
+        "q": "حرص المعلم الممارس على إبراز قصص النجاح الوطنية المعاصرة للطلاب يعكس:",
+        "options": [
+            "رغبته في المبالغة الإعلامية والإنجاز الشكلي.",
+            "تعبيره عن ولائه وانتمائه وتوظيف الأنشطة والمواقف لتعزيز ذلك في نفوس المتعلمين.",
+            "التزامه الحصري بتوجيهات الكتاب المدرسي القديم.",
+            "سعيه للحصول على مكافأة مالية تميز من الإدارة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 32,
+        "q": "لتجنب التحيز الثقافي عند تقييم أداء الطلاب في المشروعات الجماعية، يحرص المعلم الممارس على:",
+        "options": [
+            "تقييم الطلاب الوافدين بمعايير أقل تساكناً.",
+            "الالتزام بممارسات تدريسية تدعم العدالة واحترام وجهات النظر الثقافية المختلفة المتنوعة.",
+            "الاعتماد على آراء الطلاب المحليين في تقييم زملائهم.",
+            "توحيد شكل المشروعات وإلغاء أي طابع ثقافي فرعي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 33,
+        "q": "إذا طلب الطلاب تنظيم معرض ثقافي يضم أكلات وملابس شعبية لدول مختلفة، فكيف يتصرف المعلم الممارس؟",
+        "options": [
+            "يرفض الطلب منعاً لحدوث فوضى داخل مرافق المدرسة.",
+            "يرحب بالفكرة ويوظفها لتقديم أمثلة إيجابية تدعم الانفتاح الواعي واحترام ثقافة الآخر.",
+            "يحيل الطلب لإدارة المدرسة لعدم مسؤوليته عن الأنشطة.",
+            "يقصر المعرض على التراث السعودي فقط ويلغي أي ثقافات أخرى."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 34,
+        "q": "تدريس المفاهيم المرتبطة باللحمة الوطنية ووحدة الصف يترجمها المعلم الممارس بـ:",
+        "options": [
+            "تقديم شعارات نظرية صماء يكررها الطلاب جماعياً.",
+            "توظيف مواقف صفية وأنشطة جماعية تذيب الخلافات وتعزز الانتماء والولاء للقيادة.",
+            "منع أي نقاش حول الاختلافات الفكرية في المجتمع.",
+            "إحالة الطلاب المختلفين سياسياً أو فكرياً للإدارة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 35,
+        "q": "عندما يظهر طالب تفوقاً في استعراض معلومات عن تاريخ حضارات عالمية قديمة، فإن المعلم الممارس:",
+        "options": [
+            "يقلل من شأن هذه المعلومات لعدم ارتباطها بالمقرر المحلي.",
+            "يستثمر مشاركته لإظهار الانفتاح الإيجابي وربطها بالتفاعل الواعي مع التنوع الثقافي.",
+            "يطلب منه التركيز على المنهج المقرر فقط وتجنب التشتت.",
+            "يعاقبه لخروجه عن خطة التحضير اليومية للحصة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 36,
+        "q": "لتقوية الاعتزاز باللغة العربية بوصفها وعاءً للهوية الوطنية، يقوم المعلم الممارس بـ:",
+        "options": [
+            "معاقبة أي طالب يستخدم كلمات أجنبية عابرة في حديثه اليومي.",
+            "توظيف ممارسات تدريسية تعزز الفخر باللغة العربية وتدعم الاعتزاز بالهوية في كافة الأنشطة.",
+            "منع تدريس اللغات الاجنبية تماماً في المدرسة.",
+            "الاكتفاء بحصص لغة العرب المقررة رسمياً دون اهتمام إضافي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 37,
+        "q": "التصرف التربوي لمعلم ممارس وجد طالباً يسخر من طريقة لباس طالب وافد:",
+        "options": [
+            "السخرية من لباس الطالب المتنمر ليعلم حجم الخطأ.",
+            "توجيه تربوي فوري وتصميم أنشطة تعزز احترام ثقافة الآخر ووجهات النظر المختلفة.",
+            "تجاهل السلوك لكونه متعلقاً بالشؤون الشخصية البحتة.",
+            "إرسال الطالب المتنمر للمنزل باكرأ دون نقاش."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 38,
+        "q": "ترسيخ قيم المواطنة الرقمية الصالحة المرتبطة بحماية أمن الوطن عبر شبكات التواصل يتم عبر:",
+        "options": [
+            "حظر استخدام الهواتف الذكية نهائياً داخل أسوار المدرسة.",
+            "توظيف مواقف تعليمية توعوية تبين دور المواطن الصالح في حماية وطنه وقيادته إلكترونياً.",
+            "تهديد الطلاب بالعقوبات الجنائية دون شرح وتوضيح.",
+            "ترك حرية النشر المطلق للطلاب لتعزيز مهارات التعبير."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 39,
+        "q": "إشراك أولياء الأمور ذوي الخلفيات الثقافية المتنوعة في الأنشطة المدرسية يدار بواسطة المعلم الممارس بـ:",
+        "options": [
+            "استبعادهم تماماً لتجنب الحساسيات الثقافية.",
+            "إظهار مرونة وانفتاح واستثمار خبراتهم ضمن الأنشطة الداعمة للاعتزاز بالهوية واحترام التنوع.",
+            "إلزامهم بارتداء زي موحد محدد لحضور الفعاليات.",
+            "الاكتفاء بدعوة أولياء الأمور المحليين فقط."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 40,
+        "q": "عندما يُكلف المعلم الممارس بإعداد لوحة جدارية تعبر عن هُوية المدرسة والوطن، فإنه:",
+        "options": [
+            "يكلف رساماً أجنبياً خارج المدرسة لإنجازها سريعاً.",
+            "يشرك طلابه بتصميم وتنفيذ أعمال تعكس الاعتزاز بالهوية والتراث الثقافي السعودي.",
+            "يكتفي بشراء لوحة جاهزة رخيصة الثمن من السوق.",
+            "يترك الجدار فارغاً لعدم كفاية ميزانية الأنشطة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 41,
+        "q": "لتعزيز ثقافة العمل التطوعي بوصفه قيمة وطنية، ينفذ المعلم الممارس:",
+        "options": [
+            "إجبار الطلاب على تنظيف الفصول دون رغبة منهم.",
+            "أنشطة ومواقف تعليمية تربط التطوع بالانتماء الحقيقي للوطن وخدمة المجتمع.",
+            "تكليف الطلاب بمهام مالية غير مجدية تربوياً.",
+            "إلغاء العمل التطوعي لتعارضه مع خطة المنهج."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 42,
+        "q": "التعامل مع الخلافات الفكرية البسيطة بين الطلاب في قضايا الهوية يديرها المعلم الممارس بـ:",
+        "options": [
+            "حسم الخلاف برأيه الشخصي المطلق وإسكات الجميع.",
+            "توجيه الحوار لاحترام وجهات النظر المختلفة وتعزيز الهوية بالحكمة والموعظة.",
+            "تحويل الأطراف المتنازعة للإدارة المدرسية فوراً.",
+            "إشعال حدة الخلاف لمعرفة من هو الأقوى حجة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 43,
+        "q": "ربط المناهج العلمية والرياضية بالمنجزات الوطنية الكبرى يمارسه المعلم الممارس كالتالي:",
+        "options": [
+            "اعتباره تشتیتاً ذهنياً للمتعلمين عن القوانين العلمية الصرفة.",
+            "توظيف أمثلة من مشروعات الوطن الكبرى لدعم الاعتزاز بالهوية في مختلف العلوم.",
+            "فرضه قسراً ولو لم يكن له أي ارتباط علمي حقيقي بالموضوع.",
+            "إهماله تماماً لكون تخصصات العلوم جافة وعالمية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 44,
+        "q": "التصرف المهني لمعلم ممارس لاحظ استخدام طالب لرموز أو إشارات تخالف الانتماء الوطني:",
+        "options": [
+            "طرده من الفصل ووصفه بأوصاف قاسية أمام أقرانه.",
+            "استعراض المواقف التربوية بحكمة وتوجيهه لتعزيز الولاء والانتماء الوطني الصحيح.",
+            "السكوت عن الأمر خوفاً من ردة فعل ولي الأمر الشرسة.",
+            "حرمانه الكلي من حضور مادة التاريخ والاجتماعات."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 45,
+        "q": "لتعزيز مهارات التعاطف الثقافي بين الطلاب، يحرص المعلم الممارس على:",
+        "options": [
+            "إقصاء أي طالب يبدي مشاعر تعاطف مع ثقافات خارجية.",
+            "تصميم أنشطة ومواقف تبين قيمة احترام ثقافة الآخر ووجهات النظر المختلفة بمرونة.",
+            "التركيز على القومية المطلقة ونبذ كل ما عداها.",
+            "ترك الطلاب ليعزلوا أنفسهم طبقياً وثقافياً."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 46,
+        "q": "عندما يُبدي الطلاب رغبة في دراسة ثقافة شعب معين، يوجههم المعلم الممارس بـ:",
+        "options": [
+            "رفض الطلب قطعياً بحجة مخالفته لخطط المنهج الوزاري.",
+            "استثمار الميل الطلابي لتقديم أمثلة إيجابية تعزز التفاعل الواعي واحترام التنوع الثقافي.",
+            "تكليفهم بجمع سلبيات ذلك الشعب ونشرها بالفصل.",
+            "تحويل الحصة لدراسة جغرافية بحتة دون التطرق لثقافاتهم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 47,
+        "q": "تعزيز مفهوم \"البيت الكبير\" (الوطن) في وجدان الطلاب الصغار يبنيه المعلم الممارس عبر:",
+        "options": [
+            "الأوامر العسكرية الصارمة والواجبات المدرسية الشاقة.",
+            "توظيف خبرات ومواقف وأنشطة تعليمية دافئة تدعم الاعتزاز بالوطن والانتماء.",
+            "تخويفهم من الأخطار الخارجية المزعومة.",
+            "إهمال الجانب الوجداني والتركيز على الحفظ الجاف."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 48,
+        "q": "تقييم مدى استيعاب الطلاب لمفاهيم الهوية الوطنية والتنوع الثقافي يجريه المعلم الممارس عبر:",
+        "options": [
+            "اختبارات التسميع الآلي الجافة لنصوص الكتاب.",
+            "تقييم الأنشطة التفاعلية والمواقف السلوكية التي تعكس احترام التنوع والاعتزاز بالهوية.",
+            "رصد درجات الحضور والانصراف اليومي الصباحي.",
+            "الاعتماد على تقارير المرشد الطلابي السرية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 49,
+        "q": "المنهجية التي يحافظ بها المعلم الممارس على لغته وهويته وسط التأثيرات العالمية هي:",
+        "options": [
+            "التقوقع والانعزال التام عن شبكات المعرفة الدولية.",
+            "إظهار الانفتاح الواعي والاعتزاز الراسخ بالهوية الوطنية والتراث في ممارساته التدريسية.",
+            "تقليد الأساليب الأجنبية بالكامل لكونها أكثر حداثة.",
+            "تهميش الأنشطة الثقافية والاكتفاء بالمواد العلمية الأكاديمية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 50,
+        "q": "التوجيه الأمثل لطالب يظهر خجلاً من ثقافته أو لهجته المحلية الأصلية:",
+        "options": [
+            "السخرية منه ليتخلص من خجله بطريقة هجومية.",
+            "تعزيز ثقته بنفسه وتوظيف مواقف صفية تبرز ثراء وتنوع الثقافات المحلية والوطنية.",
+            "مطالبته بتغيير لهجته قسراً خارج الفصل الدراسي.",
+            "إهماله تماماً لعدم قدرته على التكيف السريع."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 51,
+        "q": "عندما يخطط المعلم الممارس لمسابقة ثقافية بين طلابه، فإنه يضمن فيها:",
+        "options": [
+            "أسئلة صعبة ومعقدة تفشل أغلب الطلاب لتحقيق التمايز.",
+            "محاور تعزز الهوية الوطنية والتراث السعودي والانفتاح الإيجابي على الثقافات.",
+            "التركيز على الثقافات الغربية لإثبات الانفتاح الحضاري.",
+            "إلغاء الجوائز المادية والاكتفاء بالتهديد بالعقاب."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 52,
+        "q": "تعبير المعلم الممارس عن الاحترام لضيوف المدرسة من جنسيات وثقافات مختلفة يعكس للطلاب:",
+        "options": [
+            "الضعف الدبلوماسي والتنازل عن الهوية المحلية.",
+            "التطبيق العملي لمرونة المعلم وانفتاحه الإيجابي واحترامه لوجهات النظر المختلفة.",
+            "عدم الاكتراث بقواعد الانضباط المدرسي المعتادة.",
+            "رغبته في الحصول على تقييم شكلي مميز من الإدارة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 53,
+        "q": "لتقليل الفجوة القيمية بين جيل الطلاب والموروث التراثي الآبائي، يقوم المعلم الممارس بـ:",
+        "options": [
+            "فرض حفظ التراث بالقوة الإلزامية الصارمة.",
+            "ربط المنهج بواقع الحياة المعاصرة عبر أنشطة تبرز قيمة التراث الثقافي السعودي.",
+            "إهمال الموروث القديم والتركيز على التقنية المستقبلية وحدها.",
+            "ترك الأجيال تتصارع قيمياً دون أي تدخل تربوي مقصود."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 54,
+        "q": "عندما يواجه المعلم الممارس معارضة من ولي أمر على إشراك ابنه في نشاط وطني ثقافي، فإنه:",
+        "options": [
+            "يفرض نشاطاً إجبارياً بالقوة متجاهلاً رأي ولي الأمر.",
+            "يحاور ولي الأمر تربوياً ويبين له أهداف الأنشطة في تعزيز الهوية والانتماء الوطني.",
+            "يستجيب فوراً لطلب ولي الأمر ويعفي الطالب تماماً دون نقاش.",
+            "يحيل ولي الأمر إلى شرطة التعليم بالمنطقة لعدم تعاونه."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 55,
+        "q": "إدماج مفاهيم اللحمة الوطنية في مادة اللغة العربية يمارسها المعلم الممارس عبر:",
+        "options": [
+            "إعراب جمل تحوي معاني التفرق والنزاعات التاريخية.",
+            "اختيار نصوص أدبية وشعرية تحث على الوحدة الوطنية والاعتزاز بالوطن والقيادة.",
+            "التركيز على القواعد النحوية الجافة دون قراءة النصوص.",
+            "تكليف الطلاب بحفظ قصائد هجاء قديمة لا علاقة لها بالواقع."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 56,
+        "q": "التصرف التربوي لمعلم ممارس وجد طالباً يمزق خريطة الوطن أو يعبث برموزه:",
+        "options": [
+            "طرد الطالب نهائياً من المدرسة وسحب كراسته الدراسية.",
+            "معالجة الموقف تربدوياً وتصميم أنشطة تعزز قيمة الاعتزاز بالهوية الوطنية والتراب الوطني.",
+            "تركه ليفعل ما يشاء باعتباره تعبيراً شخصياً عن الحرية.",
+            "إبلاغ الإدارة الأمنية لتوقيف ولي أمر الطالب فوراً."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 57,
+        "q": "لتعزيز ثقافة الحوار الهادئ حول قضايا التنوع الثقافي، يطبق المعلم الممارس:",
+        "options": [
+            "قاعدة الصوت الأرتفع هو صاحب الحق دائماً بالفصل.",
+            "إدارة النقاش بمرونة واحترام وجهات النظر المختلفة وربطها بالثوابت الوطنية.",
+            "منع الطلاب تماماً من الحديث في أي شأن ثقافي خارج المنهج.",
+            "السماح بالفوضى اللفظية بدعوى تفريغ الطاقات الطلابية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 58,
+        "q": "عندما يطلب الطلاب عرض صور لعائلاتهم من بلدان متعددة، يستغل المعلم الممارس الموقف بـ:",
+        "options": [
+            "رفض الطلب لعدم وجود متسع في خطة التحضير اليومية.",
+            "دعوة الطلاب لعرض صور تعكس تنوع الثقافات بإيجابية واحترام متبادل للهوية.",
+            "الاكتفاء بصور العائلات المحلية السعودية فقط وإقصاء الآخرين.",
+            "السخرية من الفروق بين العائلات لتسلية بقية الطلاب."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 59,
+        "q": "بناء الوعي التاريخي الصحيح لدى الناشئة ضد الأكاذيب والمغالطات يدعمه المعلم الممارس بـ:",
+        "options": [
+            "حث الطلاب على تصديق كل ما ينشر في وسائل التواصل الحديثة.",
+            "توظيف خبرات ومواقف تعليمية تستند للحقائق التاريخية الوطنية الثابتة لتعزيز الانتماء.",
+            "منع الطلاب من استخدام محركات البحث التاريخية تماماً.",
+            "ترك الطلاب يبحثون بعشوائية دون توجيه علمي رصين."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 60,
+        "q": "الاستجابة المثلى لمعلم ممارس يلاحظ تأثر طلابه بموضات ثقافية خارجية غريبة ومخالفة للقيم:",
+        "options": [
+            "إطلاق الأحكام القاسية عليهم ووصفهم بالانحراف والضياع.",
+            "توجيههم بمرونة وتصميم أنشطة تعزز الاعتزاز بالهوية الوطنية وتوضح الأصالة والمعاصرة.",
+            "تقليدهم في مظهرهم لكسب ودهم وثقتهم الشخصية.",
+            "طرد كل من يظهر بتلك الموضات خارج أسوار المدرسة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 61,
+        "q": "تعزيز مكانة اللغة العربية بوصفها ركيزة أساسية للهوية الوطنية ينفذه المعلم الممارس عبر:",
+        "options": [
+            "فرض التحدث باللغة الفصحى المعقدة في كل تفاصيل الحياة المدرسية.",
+            "توظيف ممارسات تدريسية تجعل من الفصحى لغة تواصل محببة وداعمة للاعتزاز بالهوية.",
+            "إهمال القواعد والتركيز حصرياً على اللهجات العامية المحلية.",
+            "السماح باستخدام اللغات الأجنبية بديلاً كاملاً للغة الأم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 62,
+        "q": "التصرف السليم لمعلم ممارس لاحظ سخرية جماعية من طالب يرتدي زياً تقليدياً لممنطقة نائية:",
+        "options": [
+            "مشاركتهم الضحك لكسر حدة التوتر الحاصل بالفصل.",
+            "إيقاف السخرية وتوظيف الموقف لإبراز ثراء التنوع التراثي المحلي والوطني.",
+            "طرد الطالب صاحب الزي التقليدي لحمايته من التنمر الخارجي.",
+            "تجاهل الحادثة تماماً لكونها مرحلة مراهقة عابرة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 63,
+        "q": "لتعزيز الشعور بالمسؤولية الوطنية تجاه الممتلكات المدرسية العامة، يربط المعلم الممارس ذلك بـ:",
+        "options": [
+            "التهديد الصارم بالخصم المالي المباشر من مصروف الطلاب.",
+            "توظيف قيم الانتماء والولاء للوطن في الحفاظ على مكتسباته العامة وبيئته.",
+            "إهمال صيانة الممتلكات وتركها تتداعي لتعلمهم الدرس.",
+            "إلقاء المسؤولية بالكامل على شركة النظافة والصيانة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 64,
+        "q": "عندما يواجه المعلم الممارس معلمين جدداً يفتقرون لمهارات تعزيز الهوية الوطنية بالتدريس:",
+        "options": [
+            "السخرية من أدائهم الضعيف أمام بقية المعلمين في الغرفة.",
+            "تقديم الدعم والمشاركة بأمثلة وممارسات تدريسية تعزز الهوية بمرونة وأخوة مهنية.",
+            "رفع تقارير سرية ضدهم لإدارة المدرسة فورا لإبعادهم.",
+            "تجاهل قصورهم تماماً لكونه غير مسؤول عن تدريبهم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 65,
+        "q": "تنمية مهارات التبادل الثقافي الإيجابي لدى الطلاب يمارسها المعلم الممارس عن طريق:",
+        "options": [
+            "غلق الأبواب أمام أي فكر خارجي منعاً للاختراق الثقافي.",
+            "تصميم أنشطة تبين كيفية أخذ الإيجابي من الثقافات الأخرى مع الثبات على الهوية.",
+            "تقليد الثقافات الأخرى تقليداً أعمى دون تمحيص.",
+            "إثارة العداء والكراهية تجاه كل ما هو أجنبي وعالمي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 66,
+        "q": "ربط المناهج الدراسية بالمناسبات الوطنية الرسمية (كاليوم الوطني ويوم التأسيس) يحرص عليه المعلم الممارس لـ:",
+        "options": [
+            "استغلال الوقت في إيقاف الدراسة الفعلية والراحة.",
+            "توظيف المواقف التعليمية لتعزيز الولاء والاعتزاز بالتراث والقيادة في وجدان الطلاب.",
+            "إرضاء الإدارة المدرسية شكلياً فقط دون مردود تربوي.",
+            "إرهاق الطلاب بتكاليف مالية إضافية لشراء الهدايا."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 67,
+        "q": "التصرف المهني لمعلم ممارس طُلب منه تدريس مقرر يحتوي على مفاهيم ثقافية وافدة قد تعارض الهوية:",
+        "options": [
+            "الامتناع عن التدريس والاعتراض الحاد على الوزارة.",
+            "معالجة المنهج بمرونة ونقد واعٍ، معززاً للهوية والثوابت الوطنية ومبيناً للإيجابي والسلبي.",
+            "تدريس المحتوى بحذافيره دون أي تعقيب أو تمحيص قيمي.",
+            "تمزيق صفحات الكتاب المدرسي التي لا تعجبه أمام الطلاب."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 68,
+        "q": "لتعزيز الانتماء المؤسسي والوطني لدى الطلاب ذوي التحديات السلوكية، يعتمد المعلم الممارس على:",
+        "options": [
+            "التشهير بأخطائهم الدورية في طابور الصباح المدرسي.",
+            "إشراكهم في الأنشطة الوطنية والوجدانية التي تبني شعورهم بالقبول والانتماء.",
+            "عزلهم تماماً عن بقية الطلاب الحريصين على التفوق.",
+            "تجاهلهم نهائياً وعدم الالتفات لوجودهم بالفصل."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 69,
+        "q": "إبراز دور المرأة السعودية التاريخي والمعاصر في المناهج والأنشطة يفعله المعلم الممارس لـ:",
+        "options": [
+            "استعراض المعلومات النسوية المجردة دون هدف تربوي.",
+            "تعزيز الاعتزاز بالهوية الوطنية والتراث الثقافي وإبراز إنجازات أبناء الوطن.",
+            "إرضاء المنظمات الحقوقية الدولية الشكلية.",
+            "إشغال حصص النشاط بأسئلة جانبية غير مهمة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 70,
+        "q": "عندما يلاحظ المعلم الممارس تأثر الطلاب بألعاب إلكترونية تعادي القيم الوطنية:",
+        "options": [
+            "تكسير الأجهزة الهواتف الذكية للطلاب داخل الفصل علناً.",
+            "توظيف مواقف تعليمية نقدية توضح خطورة تلك الألعاب وتدعم الانتماء والوعي الأمني.",
+            "مشاركة الطلاب اللعب لتعزيز التواصل الشخصي معهم.",
+            "تجاهل الأمر لكونه ترفيهاً رقمياً خارج أسوار المدرسة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 71,
+        "q": "ترسيخ قيم الاحترام المتبادل بين الطلاب ذوي المستويات الاجتماعية والاقتصادية المختلفة:",
+        "options": [
+            "ترك الطبقات تتعامل فيما بينها دون تدخل تربوي.",
+            "توجيه الطلاب بمواقف صفية تعزز وحدة المجتمع والاعتزاز الإنساني والوطني المشترك.",
+            "تخصيص مقاعد دراسية للفئات الغنية وأخرى للفقيرة.",
+            "السخرية من الفوارق المادية لإضحاك بقية الصف."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 72,
+        "q": "التعامل الأمثل لمعلم ممارس مع طالب يصر على التحدث بلغة أجنبية طوال الوقت متجاهلاً العربية:",
+        "options": [
+            "طرده من الفصل ومنعه من دخول الحصة نهائياً.",
+            "محاورته بمرونة، محبباً له لغته العربية الأم بوصفها وعاء هويته الوطنية واعتزازه.",
+            "مسايرته والتحدث معه باللغة الأجنبية لتشجيعه.",
+            "السخرية من لكنته الأجنبية أمام زملائه بالفصل."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 73,
+        "q": "تنظيم رحلة مدرسية تعليمية لمعلم ممارس تستهدف تعزيز الهوية الوطنية تتوجه نحو:",
+        "options": [
+            "المنتجعات الترفيهية الاستهلاكية التجارية البحتة.",
+            "المواقع التاريخية والمتاحف الوطنية التي تبرز التراث والتاريخ السعودي العريق.",
+            "المقاهي والمطاعم الأجنبية الحديثة المجاورة.",
+            "المزارع الخاصة بالشخصيات النافذة فقط."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 74,
+        "q": "التصرف التربوي لمعلم ممارس لاحظ انتشار إشاعة مغرضة تمس أمن الوطن بين الطلاب:",
+        "options": [
+            "تداول الإشاعة وتضخيمها لزيادة الحماس النقاشي.",
+            "وأد الإشاعة بالحجة والبرهان وتوظيف الموقف لتعزيز الوعي والانتماء وحماية الوطن.",
+            "معاقبة كافة الطلاب بالضرب المبرح دون نقاش.",
+            "التغاضي عن الإشاعة لكونها مجرد كلام صبيان عابر."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 75,
+        "q": "لتعزيز قيم العدالة والنزاهة بوصفها قيماً وطنية عليا، يحرص المعلم الممارس على:",
+        "options": [
+            "المحاباة والمجاملة للطلاب المتنفذين بالفصل.",
+            "تطبيق معايير العدالة والموضوعية التامة في تقييم وتعاملات طلابه لتعزيز المواطنة.",
+            "إعطاء درجات عشوائية لتقليل التذمر الطلابي.",
+            "ترك توزيع الدرجات لاختيار الطلاب أنفسهم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 76,
+        "q": "تدريس الأحداث التاريخية الوطنية الكبرى بأسلوب تفاعلي يعتمده المعلم الممارس لـ:",
+        "options": [
+            "تحويل التاريخ إلى مادة ترفيهية خالية من الفوائد.",
+            "تعزيز الاعتزاز بالهوية الوطنية وبناء الوعي العريق بالتراث والتاريخ السعودي.",
+            "إجبار الطلاب على حفظ تواريخ المعارك صماً.",
+            "تضييع الوقت المتبقي من الفصل الدراسي الطويل."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 77,
+        "q": "عندما يواجه المعلم الممارس نقداً حاداً لبعض عادات المجتمع المحلي من طالب وافد:",
+        "options": [
+            "طرد الطالب فوراً وإهانة بلده وثقافته رداً عليه.",
+            "إظهار المرونة، وتوضيح الأسس القيمية لتلك العادات باحترام، وتعزيز ثقافة الحوار.",
+            "الاعتراف بأن المجتمع المحلي متخلف مقارنة بثقافة الطالب الوافد.",
+            "الصمت التام والهروب من الرد على استفسار الطالب."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 78,
+        "q": "تعزيز الفخر بالصناعات والمنتجات الوطنية المحلية في البيئة الصفية يمارسه المعلم الممارس بـ:",
+        "options": [
+            "الاعتماد الحصري على المستوردات الأجنبية في كل الأنشطة.",
+            "توظيف أمثلة تشجع على دعم الاقتصاد الوطني وتبرز جودة الصناعة السعودية.",
+            "السخرية من المنتجات المحلية والتقليل من شأنها.",
+            "إلغاء أي حديث اقتصادي داخل المقررات الدراسية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 79,
+        "q": "بناء جسور الثقة والتواصل المستمر مع الطلاب لتعزيز الشعور بالأمان والانتماء ينجزه المعلم الممارس عبر:",
+        "options": [
+            "التهديد المستمر والعقاب البدني والنفسي القاسي.",
+            "إظهار المودة والدعم المستمر وتصميم بيئات تعلم دافئة تعزز الانتماء والولاء.",
+            "الابتعاد التام عن الطلاب وعدم الحديث معهم شخصياً.",
+            "تلبية كافة مطالب الطلاب مهما كانت مخالفة للنظام واللوائح."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 80,
+        "q": "التوجيه التربوي لمعلم ممارس وجد طالباً يرفض الوقوف لتحية السلام الملكي:",
+        "options": [
+            "حرمانه من دخول المدرسة طوال الفصل الدراسي.",
+            "محاورته باحتواء وترشيد، مبيناً له دلالات السلام الملكي في تجسيد الولاء والانتماء.",
+            "إبلاغ الجهات الأمنية الخارجية للتحقيق معه.",
+            "السخرية منه أمام طابور الصباح المدرسي بالكامل."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 81,
+        "q": "إشراك الطلاب ذوي الإعاقة ودمجهم الفعّال في الأنشطة الوطنية الصفية يعكس لدى المعلم الممارس:",
+        "options": [
+            "استحالة تطبيق ذلك لعدم جاهزية المرافق.",
+            "تجسيداً لمبادئ العدالة والانتماء الوطني الشامل لكافة أبناء الوطن دون تمييز.",
+            "رغبة في استعراض القدرات الإدارية أمام المشرف.",
+            "تلبية لإلزامات روتينية شكلية مفروضة من الوزارة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 82,
+        "q": "لتعزيز مهارات البحث العلمي المرتبطة بتاريخ الوطن، يکلف المعلم الممارس طلابه بـ:",
+        "options": [
+            "نسخ مقالات جاهزة من الإنترنت دون قراءة أو تحليل.",
+            "إعداد مشروعات بحثية مصغرة تستكشف ملامح التراث والتاريخ الوطني السعودي.",
+            "ترجمة كتب أجنبية لا علاقة لها بتاريخ المنطقة.",
+            "جمع أموال لتحet المتاحف الخاصة والتبرع لها."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 83,
+        "q": "التصرف الاحترافي لمعلم ممارس لاحظ تشويه بعض معالم المدرسة بعبارات غير لائقة:",
+        "options": [
+            "معاقبة الفصل بأكمله بالحرمان من الفسحة اليومية.",
+            "معالجة السلوك تربوياً وربطه بالمسؤولية الوطنية في حماية مكتسبات الوطن والمدرسة.",
+            "ترك الجدران مشوهة لتعلم الإدارة درساً في الصيانة.",
+            "تكليف الطلاب بطلاء المدرسة كاملاً على نفقتهم الخاصة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 84,
+        "q": "تعزيز قيم التضامن الإنساني العالمي من منظور وطني راسخ يمارسه المعلم الممارس عبر:",
+        "options": [
+            "الانعزال التام وعدم مد يد العون لأي إنسان بالعالم.",
+            "إبراز الدور الإنساني الرائد لوطنه عالمياً وربط ذلك بالقيم الإسلامية والوطنية.",
+            "استيراد مشكلات العالم أجمع وإقحامها ببيئة الفصل.",
+            "التفاخر المطلق والتجبر على الدول والشعوب الأخرى."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 85,
+        "q": "عندما ينظم المعلم الممارس مسابقات في الشعر الوطني الفصيح، فإنه يسعى إلى:",
+        "options": [
+            "إرهاق ذاكرة الطلاب بحفظ أبيات طويلة وصعبة.",
+            "إبراز جماليات اللغة العربية وتعزيز الاعتزاز بالهوية والتراث الشعري السعودي.",
+            "اكتشاف المواهب الغنائية الطربية لدى الطلاب.",
+            "ملء الفراغ الإداري لغياب خطة المنهج."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 86,
+        "q": "تدريب الطلاب على آداب الحوار الوطني الراقي والبناء يمارسه المعلم الممارس بـ:",
+        "options": [
+            "فرض آراء محددة يتبناها المعلم ورفض ما عداها.",
+            "إتاحة المساحة لاحترام وجهات النظر المختلفة وإدارة الحوار بموضوعية ومرونة.",
+            "منع الطلاب تماماً من إبداء آرائهم السياسية والوطنية.",
+            "ترك الحوار يتحول إلى مشاجرات لفظية وثنّائية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 87,
+        "q": "ربط المنجزات التقنية الحديثة برؤية الوطن الطموحة في عقول الطلاب ينجزه المعلم الممارس كالتالي:",
+        "options": [
+            "اعتبار التقنية مؤامرة غربية يجب الحذر منها.",
+            "توظيف التطور التقني لخدمة التعلم وإبراز قفزات الوطن التنموية والاعتزاز بها.",
+            "الاكتفاء بشرح التقنية القديمة وتجاهل الذكاء الاصطناعي.",
+            "إسناد تعليم التقنية لشركات تجارية خارجية بمقابل."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 88,
+        "q": "التصرف التربوي لمعلم ممارس شعر بأن طلابه يعانون من فتور وافتقار للحماس تجاه الأنشطة الوطنية:",
+        "options": [
+            "فرض الأنشطة بالقوة العسكرية والعقاب اللفظي.",
+            "تجديد أساليبه وتصميم مواقف تفاعلية ممتعة تلامس وجدانهم وتجدد شغفهم بالوطن.",
+            "إلغاء الأنشطة الوطنية نهائياً لعدم جدواها.",
+            "اتهام الطلاب بالخيانة وضعف الانتماء علناً."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 89,
+        "q": "لغرس قيمة المحافظة على البيئة الصحراوية والبحرية للوطن، يعتمد المعلم الممارس على:",
+        "options": [
+            "تكليف الطلاب بحفظ قوانين البيئة العالمية صماً.",
+            "توظيف أنشطة ميدانية ومواقف صفية تربط حماية بيئة الوطن بالانتماء الحقيقي.",
+            "منع الطلاب من زيارة الأماكن البرية والبحرية نهائياً.",
+            "تجاهل قضايا البيئة لكونها ليست من صميم مواد التاريخ."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 90,
+        "q": "عندما يطلب طالب وافد مشاركة زملائه احتفالاً خاصاً بثقافته الأم داخل الفصل:",
+        "options": [
+            "رفض الطلب قطعياً لمنع إثارة النعرات.",
+            "الموافقة بمرونة وتوظيف المناسبة لتعزيز الانفتاح الإيجابي واحترام التنوع.",
+            "طرد الطالب لكونه يحاول طمس الهوية المحلية.",
+            "تحويل الحصة إلى احتفال خارجي كامل دون درس."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 91,
+        "q": "إبراز النماذج المضيئة للعلماء والنابغين السعوديين قديماً وحديثاً يحرص عليه المعلم الممارس لـ:",
+        "options": [
+            "تعجيز الطلاب بأسماء شخصيات صعبة الحفظ.",
+            "بناء القدوة وتنمية الاعتزاز بالهوية الوطنية وإبراز الطاقات السعودية المبدعة.",
+            "تهميش العلماء الأجانب تماماً وتقليص العلوم العالمية.",
+            "ملء صفحات الكتاب المدرسي بحشو إضافي غير مبرر."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 92,
+        "q": "التعامل الاحترافي لمعلم ممارس تلقى نقداً من مشرف تربوي حول ضعفه في دمج الهوية بالتدريس:",
+        "options": [
+            "التذمر والشجار مع المشرف ورفض توجيهاته بالمطلق.",
+            "تقبل التوجيه بمرونة وتوظيف ممارسات ومواقف تعزز الهوية بفاعلية أكبر بالمستقبل.",
+            "تقديم شكوى رسمية ضد المشرف لمدير التعليم.",
+            "إهمال ملاحظات المشرف تماماً والاستمرار بنفس النهج."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 93,
+        "q": "ترسيخ قيم الاعتدال والوسطية في مواجهة الأفكار المتطرفة يبنيه المعلم الممارس بـ:",
+        "options": [
+            "التطرف المضاد واستخدام لغة التهديد والوعيد المستمر.",
+            "تصميم بيئات تعلم دافئة ومواقف صفية تعزز الوسطية ونبذ التطرف الفكري.",
+            "غلق باب النقاش في القضايا الفكرية والدينية تماماً.",
+            "ترك الطلاب يتبادلون الأفكار الهدامة بحرية مطلقة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 94,
+        "q": "توظيف القصص التاريخية الشعبية المحلية في ضرب الأمثال التربوية يعكس لدى المعلم الممارس:",
+        "options": [
+            "الرجعية والتخلف الفكري في أساليب التدريس.",
+            "وعياً عالياً بضرورة ربط المنهج بالتراث الثقافي السعودي الأصيل.",
+            "عجزه عن استخدام النظريات التربوية الغربية الحديثة.",
+            "رغبته في التسلية وإضاعة الوقت المتبقي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 95,
+        "q": "لتقوية الروابط الاجتماعية بين طلاب الفصل المختلفين ثقافياً، ينظم المعلم الممارس:",
+        "options": [
+            "جماعات فصلية مغلقة تفصل بين المحليين والوافدين.",
+            "مشروعات ومجموعات عمل مشتركة تدمج الثقافات وتبني التعاون والاعتزاز الوطني.",
+            "منافسات عدائية شرسة تفرز الأقوى والأضعف.",
+            "مقاطعة تامة لأي أنشطة جماعية وتفضيل التعلم الفردي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 96,
+        "q": "عندما يعرض الطلاب مشروعاتهم عن معالم السعودية السياحية الكبرى (كنيوم والدرعية):",
+        "options": [
+            "يسخر من جودة مشروعاتهم ويقلل من جهودهم.",
+            "يشجعهم ويوظف عروضهم لتعزيز الفخر والاعتزاز بنهضة الوطن وتنميته.",
+            "يطالبهم بالتركيز على الجغرافيا القديمة وترك المشاريع المعاصرة.",
+            "يكتفي برصد الدرجات دون الاطلاع على تفاصيل المشاريع."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 97,
+        "q": "تعزيز ثقافة الحفاظ على الهوية اللغوية واللهجات المحلية الثرية يمارسه المعلم الممارس بـ:",
+        "options": [
+            "محاربة جميع اللهجات المحلية والسخرية من متحدثيها.",
+            "تقدير التنوع الثقافي واللغوي المحلي بوصفه جزءاً من فسيفساء التراث الوطني.",
+            "منع تدريس اللغة الفصحى والاكتفاء باللهجات فقط.",
+            "تجاهل اللغة ومفرداتها لكونها خارج تقييم الاختبارات."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 98,
+        "q": "التصرف التربوي لمعلم ممارس وجد طالباً ينشر أفكاراً تشكك في تاريخ وطنه المجيد:",
+        "options": [
+            "طرده من المدرسة وسحب حقيبته المدرسية فوراً.",
+            "محاورته بالأدلة التاريخية وتصميم مواقف تعليمية تعزز وعيه واعتزازه بهويته وتاريخه.",
+            "إهماله تماماً لكونه طالباً معانداً لا فائدة منه.",
+            "اتهامه بالخيانة العظمى وإحالته للجهات الأمنية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 99,
+        "q": "دمج مفاهيم الانتماء الوطني والولاء للقيادة في مادة الرياضيات يتم كالتالي:",
+        "options": [
+            "استحالة ربط الأرقام الحسابية بالانتماء الوطني.",
+            "حل مشكلات حسابية مستوحاة من مشاريع التنمية الوطنية الكبرى وإحصاءات الوطن.",
+            "إجبار الطلاب على حفظ تواريخ تولي القيادة صماً بمادة الحساب.",
+            "إهمال الجانب الوطني والاقتصار على المعادلات المجردة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 100,
+        "q": "الهدف الأسمى من ممارسات المعلم الممارس في تعزيز الهوية الوطنية والتنوع الثقافي هو:",
+        "options": [
+            "الحصول على تقييم سنوي ممتاز يرفع مرتبه المالي.",
+            "بناء جيل معتز بهويته، منفتح بوعي، قادر على خدمة وطنه ومجتمعه بكل كفاءة.",
+            "اجتياز اختبار رخصة المهنة فقط دون تطبيق عملي حقيقي.",
+            "إرضاء رغبات الإدارة المدرسية والمشرف التربوي شكلياً."
+        ],
+        "correct": 1
+    }
+];
+
+        // خلط Fisher–Yates يغير مواقع الاختيارات في كل محاولة، مع حفظ الإجابة الصحيحة.
+        const originalQuizData = quizData.map(question => ({
+            ...question, options: [...question.options]
+        }));
+        function shuffledQuestion(question) {
+            const choices = question.options.map((text, index) => ({ text, isCorrect: index === question.correct }));
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+            return {
+                ...question,
+                options: choices.map(choice => choice.text),
+                correct: choices.findIndex(choice => choice.isCorrect)
+            };
+        }
+        function prepareAttempt() {
+            originalQuizData.forEach((question, index) => {
+                quizData[index] = shuffledQuestion(question);
+            });
+        }
+        prepareAttempt();
+        const letters = ["أ", "ب", "ج", "د"];
+        let currentQIndex = 0;
+        let score = 0;
+        const answersState = {}; // لتخزين حالة إجابات المستخدم
+        let professionalView = false;
+        const encourageBefore = [
+            '💡 شجّع طلابك على المحاولة: اختر الإجابة التي تراها صحيحة، ثم تحقّق من الحل.',
+            '🌟 لا تتعجل — اقرأ الخيارات كلها ثم اختر بثقة.',
+            '🎯 فرصة رائعة للتدريب: حاول أولاً ثم راجع الإجابة الصحيحة.',
+            '🚀 أنت قادر على الحل، فقط فكّر بهدوء وحدد الأنسب.'
+        ];
+        const encourageSuccess = [
+            'أحسنت جدًا! ✅ إجابة موفقة، استمر على هذا التميّز.',
+            'رائع يا بطل 👏 إجابتك صحيحة، واصل النجاح.',
+            'ممتاز 🌟 اختيار صحيح يدل على فهم جميل.',
+            'إجابة صحيحة 💚 استمر بنفس التركيز.'
+        ];
+        const encourageRetry = [
+            'محاولة جيدة 💛 راجع السؤال مرة أخرى وستصل للإجابة الصحيحة.',
+            'لا بأس 🌷 الخطأ خطوة نحو التعلّم، حاول من جديد.',
+            'استمر في المحاولة ✨ بالتفكير الهادئ ستنجح.',
+            'أنت قريب من الحل 🎯 اقرأ الخيارات مجددًا وتعلّم من التصحيح.'
+        ];
+        function randomPick(list){ return list[Math.floor(Math.random()*list.length)]; }
+        function updateEncouragement() {
+            const box = document.getElementById('student-encourage');
+            if (!box) return;
+            box.className = 'student-encourage';
+            if (!quizData.length || !answersState.hasOwnProperty(currentQIndex)) {
+                box.textContent = randomPick(encourageBefore);
+                return;
+            }
+            const item = quizData[currentQIndex];
+            const ok = answersState[currentQIndex] === item.correct;
+            box.textContent = ok ? randomPick(encourageSuccess) : randomPick(encourageRetry);
+            box.classList.add(ok ? 'success' : 'retry');
+        }
+        function toggleProfessionalView() {
+            professionalView = !professionalView;
+            const pro = document.getElementById('pro-student-screen');
+            const standard = document.getElementById('standard-card-body');
+            const btn = document.getElementById('btn-pro-mode');
+            if (pro) pro.style.display = professionalView ? 'block' : 'none';
+            if (standard) standard.style.display = professionalView ? 'none' : 'flex';
+            if (btn) {
+                btn.classList.toggle('active', professionalView);
+                btn.innerHTML = professionalView ? '📘 العرض العادي' : '✨ شاشة احترافية';
+            }
+            updateEncouragement();
+        }
+        function currentStudentText() {
+            const item = quizData[currentQIndex];
+            if (!item) return '#الرخصة-المهنية_عام';
+            const lines = [
+                '#الرخصة-المهنية_عام',
+                '📘 الرخصة المهنية عام | المعيار الأول',
+                'الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية',
+                '',
+                `❓ السؤال ${item.num}: ${item.q}`,
+                ...item.options.map((choice, index) => `${letters[index]}) ${choice}`),
+                '',
+                '🧠 شجّع نفسك على الحل أولاً ثم راجع الإجابة.',
+                '✍️ إعداد: إبراهيم أبوزيد | معلم ومدرب وباحث',
+                '📢 قناة الرخصة المهنية عام:',
+                CHANNEL_URL,
+                '📞 واتساب / تواصل: ‎+966 55 783 1353‎'
+            ];
+            return lines.join('\n');
+        }
+        async function copyQuestionOnly() {
+            const feedback = document.getElementById('student-copy-feedback');
+            const message = currentStudentText();
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(message);
+                } else {
+                    const area = document.createElement('textarea');
+                    area.value = message;
+                    area.style.cssText = 'position:fixed;left:-9999px;top:0';
+                    document.body.appendChild(area);
+                    area.focus(); area.select();
+                    const success = document.execCommand('copy');
+                    area.remove();
+                    if (!success) throw new Error('copy failed');
+                }
+                feedback.textContent = '✓ تم نسخ السؤال والخيارات بنجاح.';
+            } catch (e) {
+                feedback.textContent = 'تعذر النسخ التلقائي من المتصفح.';
+            }
+        }
+        function shareStudentQuestion() {
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(currentStudentText()), '_blank', 'noopener,noreferrer');
+        }
+
+        function loadQuestion() {
+            if (quizData.length === 0) {
+                document.getElementById("q-badge").innerText = "قالب جاهز";
+                document.getElementById("q-text").innerText = "سيتم عرض الأسئلة الجديدة هنا بعد إضافتها.";
+                document.getElementById("question-count").innerText = "الأسئلة: 0";
+                document.getElementById("progress-bar").style.width = "0%";
+                document.getElementById("options-container").innerHTML = "";
+                const proOpt = document.getElementById('pro-options-container'); if (proOpt) proOpt.innerHTML = '';
+                const proQ = document.getElementById('pro-q-text'); if (proQ) proQ.innerText = "سيتم عرض الأسئلة الجديدة هنا بعد إضافتها.";
+                const proB = document.getElementById('pro-q-badge'); if (proB) proB.innerText = 'قالب جاهز';
+                document.getElementById("btn-prev").disabled = true;
+                document.getElementById("btn-next-top").disabled = true;
+                updateEncouragement();
+                return;
+            }
+            const currentData = quizData[currentQIndex];
+            document.getElementById("q-badge").innerText = `سؤال ${currentData.num}`;
+            document.getElementById("q-text").innerText = currentData.q;
+            document.getElementById("question-count").innerText = `السؤال ${currentQIndex + 1} من ${quizData.length}`;
+            document.getElementById("btn-next-top").innerText = currentQIndex === quizData.length - 1 ? "عرض النتيجة" : "التالي ⬅";
+            document.getElementById("progress-bar").style.width = `${((currentQIndex + 1) / quizData.length) * 100}%`;
+            document.getElementById("btn-prev").disabled = (currentQIndex === 0);
+            document.getElementById("btn-next-top").disabled = false;
+
+            const proBadge = document.getElementById('pro-q-badge');
+            const proText = document.getElementById('pro-q-text');
+            if (proBadge) proBadge.innerText = `سؤال ${currentData.num}`;
+            if (proText) proText.innerText = currentData.q;
+
+            const hasAnswered = answersState.hasOwnProperty(currentQIndex);
+            const userPick = answersState[currentQIndex];
+
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+            currentData.options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerHTML = `
+                    <span class="opt-letter">${letters[index]}</span>
+                    <span class="opt-text">${opt}</span>
+                `;
+                if (hasAnswered) {
+                    btn.setAttribute("disabled", "true");
+                    if (index === currentData.correct) btn.classList.add("correct");
+                    else if (index === userPick) btn.classList.add("wrong");
+                } else {
+                    btn.onclick = () => selectOption(index);
+                }
+                optionsContainer.appendChild(btn);
+            });
+
+            const proOptionsContainer = document.getElementById('pro-options-container');
+            if (proOptionsContainer) {
+                proOptionsContainer.innerHTML = '';
+                currentData.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'student-option';
+                    btn.innerHTML = `<span class="student-option-letter">${letters[index]}</span><span class="student-option-text">${opt}</span>`;
+                    if (hasAnswered) {
+                        btn.setAttribute('disabled', 'true');
+                        if (index === currentData.correct) btn.classList.add('correct');
+                        else if (index === userPick) btn.classList.add('wrong');
+                    } else {
+                        btn.onclick = () => selectOption(index);
+                    }
+                    proOptionsContainer.appendChild(btn);
+                });
+            }
+            updateEncouragement();
+        }
+
+        function selectOption(selectedIndex) {
+            if (answersState.hasOwnProperty(currentQIndex)) return;
+            answersState[currentQIndex] = selectedIndex;
+            const currentData = quizData[currentQIndex];
+            if (selectedIndex === currentData.correct) {
+                score++;
+                document.getElementById("score-count").innerText = `النقاط: ${score}`;
+            }
+            loadQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < quizData.length - 1) {
+                currentQIndex++;
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResult() {
+            document.getElementById("btn-prev").style.display = 'none';
+            document.getElementById("btn-next-top").style.display = 'none';
+            document.getElementById("quiz-screen").style.display = "none";
+            document.getElementById("result-screen").style.display = "block";
+            document.getElementById("final-score").innerText = `${score} / ${quizData.length}`;
+            
+            const percentage = (score / quizData.length) * 100;
+            let msg = "";
+            if (percentage >= 90) msg = "ممتاز جداً! إلمام ممتاز بالمعايير العامة.";
+            else if (percentage >= 75) msg = "أداء رائع جداً! استمر في المراجعة والتدريب.";
+            else if (percentage >= 50) msg = "أداء جيد، ينصح بمراجعة الأسئلة التي تعثرت بها.";
+            else msg = "تحتاج لمزيد من القراءة والمراجعة الدقيقة للمعايير العامة.";
+            
+            document.getElementById("result-message").innerText = msg;
+        }
+
+        function restartQuiz() {
+            document.getElementById("btn-prev").style.display = '';
+            document.getElementById("btn-next-top").style.display = '';
+            currentQIndex = 0;
+            score = 0;
+            for (let key in answersState) delete answersState[key];
+            prepareAttempt();
+            document.getElementById("score-count").innerText = `النقاط: 0`;
+            document.getElementById("result-screen").style.display = "none";
+            document.getElementById("quiz-screen").style.display = "block";
+            loadQuestion();
+        }
+
+        function exportToPDF() {
+            try {
+                const root = document.getElementById('pdf-export-root');
+                if (!root) throw new Error('وعاء تصدير PDF غير موجود.');
+                if (!Array.isArray(quizData) || !quizData.length) throw new Error('لا توجد أسئلة للتصدير.');
+
+                const qrSource = document.querySelector('.bottom-footer .qr-css');
+                const qrMarkup = qrSource ? qrSource.outerHTML : '<div style="font-size:11px;font-weight:900;color:#0f456f">QR</div>';
+
+                const esc = (text) => String(text ?? '').replace(/[&<>"']/g, ch => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[ch]));
+
+                const letters = ['أ','ب','ج','د','هـ','و'];
+
+                root.innerHTML = '';
+                root.style.display = 'block';
+                root.style.position = 'absolute';
+                root.style.right = '-100000px';
+                root.style.top = '0';
+                root.style.visibility = 'visible';
+
+                function createPage(pageNo) {
+                    const page = document.createElement('section');
+                    page.className = 'pdf-page';
+                    page.innerHTML = `
+                        <div class="pdf-topbar">
+                            <div class="pdf-top-pill">المعيار الأول</div>
+                            <div class="pdf-title-wrap">
+                                <div class="pdf-main-title">الرخصة المهنية عام — الالتزام بالقيم الإسلامية الوسطية</div>
+                                <div class="pdf-sub-title">المعيار الأول: الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية</div>
+                            </div>
+                            <div class="pdf-meta-top">إبراهيم أبوزيد | صفحة <span class="pdf-page-no">${pageNo}</span><br>☎ <span class="pdf-ltr-inline">+966 55 783 1353</span><br>✈ <span class="pdf-ltr-inline">@myibhistoricy</span></div>
+                        </div>
+                        <div class="pdf-page-content">
+                            <div class="pdf-grid"></div>
+                        </div>
+                        <div class="pdf-footerbar pdf-lux-footer" dir="rtl">
+                            <div class="pdf-lux-item pdf-lux-name"><span class="pdf-lux-mark">★</span><span>إبراهيم أبوزيد</span></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item"><span class="pdf-lux-mark">☎</span><b class="pdf-ltr-inline" dir="ltr">+966 55 783 1353</b></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item"><span class="pdf-lux-mark">✈</span><b class="pdf-ltr-inline" dir="ltr">@myibhistoricy</b></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item pdf-lux-channel">قناة الرخصة المهنية عام</div>
+                        </div>
+                    `;
+                    root.appendChild(page);
+                    return {
+                        page,
+                        grid: page.querySelector('.pdf-grid')
+                    };
+                }
+
+                function createCard(item) {
+                    const card = document.createElement('article');
+                    card.className = 'pdf-card';
+                    card.innerHTML = `
+                        <div class="pdf-card-num">${esc(item.num)}</div>
+                        <div class="pdf-card-title">${esc(item.q)}</div>
+                        <div class="pdf-card-options">
+                            ${(item.options || []).map((opt, idx) => `
+                                <div class="pdf-card-option ${idx === Number(item.correct) ? 'pdf-correct-option' : ''}">
+                                    <div class="pdf-card-letter">${letters[idx] || idx + 1}</div>
+                                    <div class="pdf-card-option-text">${esc(opt)}${idx === Number(item.correct) ? ' <span class="pdf-correct-mark">✓ الإجابة الصحيحة</span>' : ''}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    return card;
+                }
+
+                let pageCount = 1;
+                let current = createPage(pageCount);
+
+                quizData.forEach((item) => {
+                    const card = createCard(item);
+                    current.grid.appendChild(card);
+
+                    const cardBottom = card.getBoundingClientRect().bottom;
+                    const footerTop = current.page.querySelector('.pdf-footerbar').getBoundingClientRect().top;
+                    const overflow = current.grid.scrollHeight > current.grid.clientHeight + 1 || cardBottom > footerTop - 12;
+                    if (overflow) {
+                        current.grid.removeChild(card);
+                        pageCount += 1;
+                        current = createPage(pageCount);
+                        current.grid.appendChild(card);
+                    }
+                });
+
+                root.querySelectorAll('.pdf-page').forEach((page, i) => {
+                    const no = page.querySelector('.pdf-page-no');
+                    if (no) no.textContent = `${i + 1}`;
+                });
+
+                root.style.position = '';
+                root.style.right = '';
+                root.style.top = '';
+                root.style.visibility = '';
+                root.offsetHeight;
+                window.print();
+
+                // Do not clear the print tree while the browser is still generating PDF.
+                // Rebuild it on the next export; keeping it hidden outside print is harmless.
+                root.style.display = '';
+            } catch (error) {
+                alert('تعذر تصدير PDF: ' + (error.message || error));
+            }
+        }
+
+        async function exportToImage() {
+            try {
+                const blob = await renderCardBlob();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `الرخصة_المهنية_عام_${quizData[currentQIndex]?.num ?? 'قالب'}.png`;
+                link.href = url;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 3000);
+                setImageFeedback('✓ تم تنزيل الصورة دون الأزرار ومع بيانات التواصل.');
+            } catch(e) {
+                setImageFeedback('تعذر تصدير الصورة؛ تحقق من اتصال الإنترنت.');
+            }
+        }
+
+
+        function getCardElementForImage(mode = 'auto') {
+            if (mode === 'professional') {
+                return document.getElementById('pro-student-screen') || document.getElementById('quiz-app');
+            }
+            if (mode === 'standard') {
+                return document.getElementById('quiz-app');
+            }
+            return professionalView ? (document.getElementById('pro-student-screen') || document.getElementById('quiz-app')) : document.getElementById('quiz-app');
+        }
+
+        async function renderCardBlob(mode = 'auto') {
+            if (typeof html2canvas !== 'function') throw new Error('مكتبة الصور غير متاحة.');
+            await document.fonts.ready;
+            const target = getCardElementForImage(mode);
+            const isProfessional = target.id === 'pro-student-screen';
+            const hiddenElements = [];
+            let contacts = null;
+            if (isProfessional) {
+                target.querySelectorAll('.student-action-row, .student-encourage, .student-copy-feedback').forEach(el => {
+                    hiddenElements.push([el, el.style.display]);
+                    el.style.display = 'none';
+                });
+                contacts = document.createElement('div');
+                contacts.setAttribute('dir', 'rtl');
+                contacts.style.cssText = 'margin-top:22px;padding:0;background:linear-gradient(135deg,#08203f 0%,#0e325c 60%,#0a2342 100%);border:2.5px solid #d4af37;border-radius:24px;text-align:center;color:#fff;font-family:Cairo,Almarai,sans-serif;overflow:hidden;box-shadow:0 16px 40px rgba(10,35,66,.18);';
+                contacts.innerHTML =
+                    '<div style="padding:14px 20px 8px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));">' +
+                        '<div style="display:inline-block;background:linear-gradient(135deg,#f7d87b,#c89522);color:#10243f;border-radius:999px;padding:7px 18px;font-size:13px;font-weight:900;box-shadow:0 4px 12px rgba(212,175,55,.28);">#الرخصة-المهنية_عام</div>' +
+                        '<div style="margin-top:12px;color:#f7d87b;font-size:27px;font-weight:900;line-height:1.4;">إبراهيم أبوزيد</div>' +
+                        '<div style="margin-top:2px;color:#ffffff;font-size:17px;font-weight:800;opacity:.96;">معلم ومدرب وباحث</div>' +
+                        '<div style="margin-top:8px;color:#d9e8fb;font-size:14px;font-weight:800;">قناة الرخصة المهنية عام</div>' +
+                    '</div>' +
+                    '<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(245,210,121,.85),transparent);margin:0 24px 8px;"></div>' +
+                    '<div style="padding:12px 18px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">📢 رابط القناة</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:13px;line-height:1.75;font-weight:800;color:#ffffff;overflow-wrap:anywhere;">t.me/+ZakELIR9__g4NmU0</div>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">✈️ حساب تليجرام</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:13px;line-height:1.75;font-weight:800;color:#ffffff;overflow-wrap:anywhere;">@myibhistoricy</div>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">📞 واتساب / تواصل</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:18px;line-height:1.6;font-weight:900;color:#ffffff;">+966 55 783 1353</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="padding:0 20px 18px;color:#cbdcf3;font-size:12px;font-weight:700;">محتوى تدريبي احترافي للرخصة المهنية العامة — نسخ ومشاركة جاهزة للنشر</div>';
+                target.appendChild(contacts);
+            }
+            let canvas;
+            try {
+                canvas = await html2canvas(target, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    scrollX: 0,
+                    scrollY: -window.scrollY
+                });
+            } finally {
+                hiddenElements.forEach(([el, oldDisplay]) => { el.style.display = oldDisplay; });
+                if (contacts) contacts.remove();
+            }
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            if (!blob) throw new Error('تعذر إنشاء الصورة.');
+            return blob;
+        }
+
+        function setImageFeedback(message) {
+            const ids = ['share-feedback', 'student-copy-feedback'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = message;
+            });
+        }
+
+        async function copyCurrentCardAsImage(mode = 'auto') {
+            setImageFeedback('جارٍ تجهيز الصورة للنسخ...');
+            try {
+                const blob = await renderCardBlob(mode);
+                if (navigator.clipboard && window.ClipboardItem) {
+                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                    setImageFeedback('✓ تم نسخ البطاقة الحالية كصورة. يمكنك لصقها مباشرة.');
+                } else {
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    link.download = `الرخصة_المهنية_عام_سؤال_${quizData[currentQIndex]?.num ?? 'بطاقة'}.png`;
+                    link.click();
+                    setTimeout(() => URL.revokeObjectURL(url), 3000);
+                    setImageFeedback('المتصفح لا يدعم نسخ الصور مباشرة؛ تم تنزيل الصورة بدلًا من ذلك.');
+                }
+            } catch (error) {
+                setImageFeedback('تعذر نسخ الصورة من هذا المتصفح.');
+            }
+        }
+
+
+        const CHANNEL_URL = 'https://t.me/+ZakELIR9__g4NmU0';
+        function currentShareText() {
+            const item = quizData[currentQIndex];
+            if (!item) return '#الرخصة-المهنية_عام\nقناة الرخصة المهنية عام: ' + CHANNEL_URL;
+            const lines = [
+                '#الرخصة-المهنية_عام',
+                '📘 الرخصة المهنية عام | المعيار الأول',
+                'الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية',
+                '',
+                `❓ السؤال ${item.num}: ${item.q}`,
+                ...item.options.map((choice, index) => `${index === item.correct ? "✅ " : ""}${letters[index]}) ${choice}${index === item.correct ? " ✔️ الإجابة الصحيحة" : ""}`),
+                '',
+                '━━━━━━━━━━━━━━',
+                '✍️ إعداد: إبراهيم أبوزيد | معلم ومدرب وباحث',
+                '📢 قناة الرخصة المهنية عام:',
+                CHANNEL_URL,
+                '✈️ حساب تليجرام: https://t.me/myibhistoricy',
+                '📞 واتساب / تواصل: \u200E+966 55 783 1353\u200E'
+            ];
+            return lines.join('\n');
+        }
+        function shareWhatsAppText() {
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(currentShareText()), '_blank', 'noopener,noreferrer');
+        }
+        function shareTelegramText() {
+            window.open('https://t.me/share/url?url=' + encodeURIComponent(CHANNEL_URL) + '&text=' + encodeURIComponent(currentShareText()), '_blank', 'noopener,noreferrer');
+        }
+        async function copyShareMessage() {
+            const feedback = document.getElementById('share-feedback');
+            const message = currentShareText();
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(message);
+                } else {
+                    const area = document.createElement('textarea');
+                    area.value = message;
+                    area.style.cssText = 'position:fixed;left:-9999px;top:0';
+                    document.body.appendChild(area);
+                    area.focus(); area.select();
+                    const success = document.execCommand('copy');
+                    area.remove();
+                    if (!success) throw new Error('لم يسمح المتصفح بالنسخ التلقائي');
+                }
+                feedback.textContent = '✓ تم نسخ الرسالة كاملة مع الاسم والقناة ووسائل التواصل.';
+            } catch(error) {
+                feedback.textContent = 'تعذر النسخ التلقائي؛ حدّث أذونات النسخ في المتصفح.';
+            }
+        }
+        async function shareCurrentImage() {
+            const feedback = document.getElementById('share-feedback');
+            feedback.textContent = 'جارٍ تجهيز صورة البطاقة…';
+            try {
+                if (typeof html2canvas !== 'function') throw new Error('مكتبة الصور غير متاحة؛ تحقق من الإنترنت.');
+                await document.fonts.ready;
+                const canvas = await html2canvas(document.getElementById('quiz-app'), {scale:2,useCORS:true,backgroundColor:'#ffffff'});
+                const blob = await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+                const filename = `الرخصة_المهنية_عام_سؤال_${quizData[currentQIndex].num}.png`;
+                const file = new File([blob], filename, {type:'image/png'});
+                if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+                    await navigator.share({files:[file],title:'الرخصة المهنية عام'});
+                    feedback.textContent = 'تم فتح نافذة مشاركة الصورة.';
+                } else {
+                    const link=document.createElement('a');
+                    const url=URL.createObjectURL(blob);
+                    link.href=url;link.download=filename;link.click();
+                    setTimeout(()=>URL.revokeObjectURL(url),3000);
+                    feedback.textContent='تم تنزيل الصورة. أرفقها في واتساب أو تليجرام للمشاركة.';
+                }
+            } catch(e) { feedback.textContent = e.name==='AbortError' ? 'تم إلغاء المشاركة.' : 'تعذرت مشاركة الصورة: '+e.message; }
+        }
+
+        loadQuestion();
+    </script>
+
+<div id="pdf-export-root" class="pdf-export-root" dir="rtl"></div>
+</body>
+</html>
